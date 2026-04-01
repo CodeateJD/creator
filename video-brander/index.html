@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>codeateJD — Video Brander</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --green: #4ade80; --pink: #f5576c; --dark: #0f0f0f; --dark2: #1a1a1a; --dark3: #252525; }
+  body { font-family: 'Inter', sans-serif; background: var(--dark); color: #fff; min-height: 100vh; }
+
+  .header {
+    padding: 20px 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; gap: 16px;
+  }
+  .header .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: inherit; }
+  .header .logo .gt { color: var(--green); }
+  .header .logo .cd { color: var(--pink); }
+  .header .subtitle { color: rgba(255,255,255,0.4); font-size: 13px; }
+  .header .back { color: rgba(255,255,255,0.3); text-decoration: none; font-size: 13px; margin-left: auto; }
+  .header .back:hover { color: var(--green); }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Steps */
+  .step { display: none; }
+  .step.active { display: block; }
+  .step-indicator { display: flex; gap: 8px; margin-bottom: 28px; }
+  .step-dot {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--dark2); border: 2px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; color: rgba(255,255,255,0.3);
+    transition: all 0.3s;
+  }
+  .step-dot.active { border-color: var(--green); color: var(--green); background: rgba(74,222,128,0.08); }
+  .step-dot.done { border-color: var(--green); color: black; background: var(--green); }
+  .step-label { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; text-align: center; }
+  .step-col { display: flex; flex-direction: column; align-items: center; }
+
+  h2 { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .desc { color: rgba(255,255,255,0.4); font-size: 14px; margin-bottom: 24px; }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 2px dashed rgba(255,255,255,0.15);
+    border-radius: 20px; padding: 50px 32px;
+    text-align: center; cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+    background: var(--dark2);
+  }
+  .upload-zone:hover, .upload-zone.dragover { border-color: var(--green); background: rgba(74,222,128,0.04); }
+  .upload-zone .icon { font-size: 44px; margin-bottom: 12px; opacity: 0.3; }
+  .upload-zone h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .upload-zone p { color: rgba(255,255,255,0.4); font-size: 13px; }
+  .upload-zone input { display: none; }
+
+  /* Canvas frame */
+  .frame-container {
+    position: relative; display: inline-block;
+    border-radius: 12px; overflow: hidden;
+    border: 2px solid rgba(255,255,255,0.08);
+    cursor: crosshair; max-width: 100%;
+  }
+  .frame-container canvas { display: block; }
+  .hint { color: rgba(255,255,255,0.4); font-size: 13px; margin-top: 12px; }
+  .selection-box { display: none; }
+
+  /* Sliders */
+  .sliders-panel {
+    display: none; margin-top: 16px; padding: 16px 20px;
+    background: var(--dark2); border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .sliders-panel.visible { display: block; }
+  .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .slider-row:last-child { margin-bottom: 0; }
+  .slider-row label { font-size: 13px; font-weight: 700; width: 50px; color: rgba(255,255,255,0.6); }
+  .slider-row input[type=range] {
+    flex: 1; accent-color: var(--pink); height: 6px;
+    -webkit-appearance: none; background: var(--dark3); border-radius: 3px; outline: none;
+  }
+  .slider-row input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 16px; height: 16px;
+    background: var(--pink); border-radius: 4px; cursor: pointer;
+  }
+  .slider-row .val { font-size: 12px; color: rgba(255,255,255,0.4); width: 50px; text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Mode selector */
+  .mode-selector { display: flex; gap: 12px; margin: 24px 0; }
+  .mode-card {
+    flex: 1; padding: 20px; background: var(--dark2);
+    border: 2px solid rgba(255,255,255,0.08); border-radius: 14px;
+    cursor: pointer; text-align: center; transition: all 0.2s;
+  }
+  .mode-card:hover { border-color: rgba(255,255,255,0.15); }
+  .mode-card.selected { border-color: var(--green); background: rgba(74,222,128,0.06); }
+  .mode-card .mode-icon { font-size: 28px; margin-bottom: 8px; }
+  .mode-card .mode-name { font-weight: 700; font-size: 14px; }
+  .mode-card .mode-desc { color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 4px; }
+
+  /* Logo upload */
+  .logo-upload {
+    display: none; margin-top: 16px; padding: 20px;
+    background: var(--dark2); border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .logo-upload.visible { display: block; }
+  .logo-upload label { font-weight: 700; font-size: 14px; display: block; margin-bottom: 8px; }
+  .logo-preview { max-height: 60px; margin-top: 8px; border-radius: 8px; }
+
+  /* Formats */
+  .formats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .format-card {
+    background: var(--dark2); border: 2px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 16px; cursor: pointer;
+    transition: all 0.2s; text-align: center;
+  }
+  .format-card:hover { border-color: rgba(255,255,255,0.15); }
+  .format-card.selected { border-color: var(--green); background: rgba(74,222,128,0.06); }
+  .format-card .label { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+  .format-card .dims { color: rgba(255,255,255,0.4); font-size: 11px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-block; padding: 14px 28px; border-radius: 12px;
+    font-family: inherit; font-size: 15px; font-weight: 800;
+    cursor: pointer; border: none; transition: all 0.2s;
+  }
+  .btn-primary { background: linear-gradient(135deg, var(--pink), #667eea); color: white; }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .btn-secondary { background: var(--dark3); color: white; border: 1px solid rgba(255,255,255,0.1); }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+  .btn-row { display: flex; gap: 12px; margin-top: 24px; }
+
+  /* Progress */
+  .progress-bar-bg {
+    width: 100%; height: 8px; border-radius: 4px;
+    background: var(--dark3); overflow: hidden; margin: 16px 0;
+  }
+  .progress-bar {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--green), var(--pink));
+    width: 0%; transition: width 0.5s;
+  }
+  .status-text { font-size: 14px; color: rgba(255,255,255,0.5); }
+
+  /* Results */
+  .result-card {
+    background: var(--dark2); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 18px 20px; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .result-card .info .rlabel { font-weight: 700; font-size: 14px; }
+  .result-card .info .size { color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 2px; }
+  .result-card a {
+    background: var(--green); color: black; padding: 10px 20px;
+    border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 13px;
+  }
+  .result-card.error { border-color: var(--pink); }
+
+  /* Caption panel */
+  .caption-panel { margin-top: 20px; }
+  .caption-block {
+    background: var(--dark2); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px;
+    padding: 12px; margin-bottom: 10px; position: relative;
+  }
+  .caption-block .caption-label {
+    font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.4); text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 6px;
+  }
+  .caption-block .caption-text {
+    font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; white-space: pre-wrap;
+  }
+  .caption-block .caption-text.hashtags { color: #667eea; font-size: 12px; }
+  .btn-copy {
+    position: absolute; top: 10px; right: 10px; padding: 4px 10px;
+    border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: transparent;
+    color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-copy:hover, .btn-copy.copied { border-color: var(--green); color: var(--green); }
+  .btn-copy-all {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(74,222,128,0.05); color: var(--green); font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-copy-all:hover { background: rgba(74,222,128,0.1); border-color: var(--green); }
+
+  /* Loading overlay */
+  .loading-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 999; justify-content: center; align-items: center; flex-direction: column; gap: 16px;
+  }
+  .loading-overlay.active { display: flex; }
+  .loading-overlay .spinner { width: 48px; height: 48px; border: 4px solid var(--dark3); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay .load-text { font-size: 14px; color: rgba(255,255,255,0.6); }
+
+  @media (max-width: 600px) {
+    .formats-grid { grid-template-columns: 1fr 1fr; }
+    .mode-selector { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="load-text" id="loadText">Cargando FFmpeg...</div>
+</div>
+
+<div class="header">
+  <a href="../" class="logo"><span class="gt">&gt;</span><span class="cd">codeate</span><span>JD</span></a>
+  <div class="subtitle">Video Brander — Reemplaza marcas de agua + exporta para redes</div>
+  <a href="../" class="back">Volver</a>
+</div>
+
+<div class="container">
+
+  <div class="step-indicator">
+    <div class="step-col"><div class="step-dot active" id="dot1">1</div><div class="step-label">Video</div></div>
+    <div class="step-col"><div class="step-dot" id="dot2">2</div><div class="step-label">Marca</div></div>
+    <div class="step-col"><div class="step-dot" id="dot3">3</div><div class="step-label">Logo</div></div>
+    <div class="step-col"><div class="step-dot" id="dot4">4</div><div class="step-label">Exportar</div></div>
+  </div>
+
+  <!-- STEP 1: Upload video -->
+  <div class="step active" id="step1">
+    <h2>Sube tu video</h2>
+    <p class="desc">Arrastra o selecciona el video con la marca de agua que quieres reemplazar</p>
+    <div class="upload-zone" id="uploadZone">
+      <div class="icon">&#127909;</div>
+      <h3>Arrastra tu video aqui</h3>
+      <p>MP4, MOV, WEBM</p>
+      <input type="file" id="fileInput" accept="video/*">
+    </div>
+    <div class="status-text" id="uploadStatus" style="margin-top:12px;"></div>
+  </div>
+
+  <!-- STEP 2: Select watermark area -->
+  <div class="step" id="step2">
+    <h2>Selecciona la marca de agua</h2>
+    <p class="desc">Haz clic y arrastra sobre la zona de la marca de agua en el video</p>
+    <div class="frame-container" id="frameContainer">
+      <canvas id="frameCanvas"></canvas>
+    </div>
+    <p class="hint" id="selectionInfo">Arrastra para seleccionar la zona...</p>
+    <div class="sliders-panel" id="slidersPanel">
+      <div class="slider-row">
+        <label>X</label>
+        <input type="range" id="sliderX" min="0" value="0" oninput="onSliderChange()">
+        <span class="val" id="valX">0</span>
+      </div>
+      <div class="slider-row">
+        <label>Y</label>
+        <input type="range" id="sliderY" min="0" value="0" oninput="onSliderChange()">
+        <span class="val" id="valY">0</span>
+      </div>
+      <div class="slider-row">
+        <label>Ancho</label>
+        <input type="range" id="sliderW" min="20" value="100" oninput="onSliderChange()">
+        <span class="val" id="valW">100</span>
+      </div>
+      <div class="slider-row">
+        <label>Alto</label>
+        <input type="range" id="sliderH" min="20" value="100" oninput="onSliderChange()">
+        <span class="val" id="valH">100</span>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(1)">Atras</button>
+      <button class="btn btn-primary" id="btnStep2Next" disabled onclick="goStep(3)">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Choose mode + logo -->
+  <div class="step" id="step3">
+    <h2>Que poner encima?</h2>
+    <p class="desc">Elige como reemplazar la marca de agua</p>
+    <div class="mode-selector">
+      <div class="mode-card" data-mode="cover" onclick="selectMode('cover')">
+        <div class="mode-icon">&#9632;</div>
+        <div class="mode-name">Solo tapar</div>
+        <div class="mode-desc">Caja negra sobre la marca</div>
+      </div>
+      <div class="mode-card selected" data-mode="brand" onclick="selectMode('brand')">
+        <div class="mode-icon">&#10095;</div>
+        <div class="mode-name">codeateJD</div>
+        <div class="mode-desc">Logo de tu marca</div>
+      </div>
+      <div class="mode-card" data-mode="logo" onclick="selectMode('logo')">
+        <div class="mode-icon">&#127912;</div>
+        <div class="mode-name">Logo custom</div>
+        <div class="mode-desc">Sube un PNG o SVG</div>
+      </div>
+    </div>
+    <div id="brandPreview" class="logo-upload visible" style="text-align:center;">
+      <img class="logo-preview" id="brandImg" style="display:inline-block;max-height:80px;" alt="codeateJD logo">
+    </div>
+    <div class="logo-upload" id="logoUpload">
+      <label>Sube tu logo (PNG con fondo transparente recomendado)</label>
+      <input type="file" id="logoInput" accept="image/png,image/svg+xml,image/jpeg">
+      <img id="logoPreview" class="logo-preview" style="display:none;">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(2)">Atras</button>
+      <button class="btn btn-primary" id="btnStep3Next" onclick="goStep(4)">Siguiente</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Choose formats + process -->
+  <div class="step" id="step4">
+    <h2>Formatos de exportacion</h2>
+    <p class="desc">Selecciona los formatos que necesitas</p>
+    <div class="formats-grid">
+      <div class="format-card selected" data-format="original" onclick="toggleFormat(this)">
+        <div class="label">Original</div><div class="dims">Sin recorte</div>
+      </div>
+      <div class="format-card" data-format="instagram-reel" onclick="toggleFormat(this)">
+        <div class="label">IG Reel/Story</div><div class="dims">1080x1920 (blur bg)</div>
+      </div>
+      <div class="format-card" data-format="instagram-feed" onclick="toggleFormat(this)">
+        <div class="label">IG Feed</div><div class="dims">1080x1080</div>
+      </div>
+      <div class="format-card" data-format="facebook" onclick="toggleFormat(this)">
+        <div class="label">Facebook</div><div class="dims">1280x720</div>
+      </div>
+      <div class="format-card" data-format="linkedin" onclick="toggleFormat(this)">
+        <div class="label">LinkedIn</div><div class="dims">1280x720</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(3)">Atras</button>
+      <button class="btn btn-primary" id="btnProcess" onclick="processVideo()">Procesar Video</button>
+    </div>
+    <div id="progressArea" style="display:none;margin-top:20px;">
+      <div class="status-text" id="processStatus">Procesando...</div>
+      <div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
+    </div>
+    <div id="resultsArea" style="display:none;margin-top:24px;">
+      <h2 style="color:var(--green);margin-bottom:16px;">Videos listos</h2>
+      <div id="resultsList"></div>
+
+      <div class="caption-panel">
+        <div class="caption-block">
+          <div class="caption-label">Caption</div>
+          <button class="btn-copy" onclick="copyText('captionText')">Copiar</button>
+          <div class="caption-text" id="captionText">¿Necesitas una web profesional para tu negocio? En codeateJD lo hacemos realidad.
+
+Desarrollo web, apps moviles e infraestructura IT — todo hecho a medida desde Caracas para el mundo.
+
+Escribenos y lleva tu negocio al siguiente nivel.
+codeatejd@gmail.com
++58 414-914-4103
+codeatejd.com</div>
+        </div>
+        <div class="caption-block">
+          <div class="caption-label"># Hashtags</div>
+          <button class="btn-copy" onclick="copyText('hashtagsText')">Copiar</button>
+          <div class="caption-text hashtags" id="hashtagsText">#DesarrolloWeb #WebDeveloper #ProgramadorCaracas #DesarrolladorWeb #AppsMoviles #Flutter #JavaScript #NodeJS #FreelancerVenezuela #TechCaracas #codeateJD #PaginaWeb #DisenoWeb #Ecommerce #StartupVenezuela #NegociosDigitales #TransformacionDigital #Venezuela #Caracas</div>
+        </div>
+        <div class="caption-block">
+          <div class="caption-label">Alt Text (accesibilidad)</div>
+          <button class="btn-copy" onclick="copyText('altText')">Copiar</button>
+          <div class="caption-text" id="altText" style="color:rgba(255,255,255,0.5);font-style:italic;font-size:12px;">Video de presentacion de codeateJD, desarrollador web freelance en Caracas, Venezuela. Se muestra un profesional en un ambiente de oficina moderna explicando los servicios de desarrollo web, apps moviles e infraestructura IT que ofrece codeateJD para negocios y emprendimientos.</div>
+        </div>
+        <button class="btn-copy-all" onclick="copyAll()">Copiar Todo (Caption + Hashtags)</button>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="resetAll()">Nuevo video</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
+<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js"></script>
+<script>
+const { FFmpeg } = FFmpegWASM;
+const { fetchFile } = FFmpegUtil;
+
+// State
+let ffmpeg = null;
+let videoFile = null;
+let videoW = 0, videoH = 0;
+let frameImg = null;
+let selection = null;
+let currentMode = 'brand';
+let logoFile = null;
+let brandLogoBlob = null;
+let scaleRatio = 1;
+
+// Generate brand logo PNG
+(function generateBrandLogo() {
+  const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1a1a1a"/>
+        <stop offset="100%" stop-color="#0f0f0f"/>
+      </linearGradient>
+      <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#f5576c"/>
+        <stop offset="100%" stop-color="#667eea"/>
+      </linearGradient>
+    </defs>
+    <rect width="200" height="200" rx="20" fill="#000000"/>
+    <rect x="16" y="188" width="168" height="3" rx="1.5" fill="url(#accent)" opacity="0.6"/>
+    <text x="100" y="58" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="600" fill="#f5576c">codeate</text>
+    <text x="100" y="152" text-anchor="middle" font-family="Arial, sans-serif" font-size="88" font-weight="900"><tspan fill="#4ade80">&gt;</tspan><tspan fill="#ffffff">JD</tspan></text>
+  </svg>`;
+  const blob = new Blob([svgStr], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = 400; c.height = 400;
+    c.getContext('2d').drawImage(img, 0, 0, 400, 400);
+    c.toBlob(b => {
+      brandLogoBlob = b;
+      const prev = document.getElementById('brandImg');
+      if (prev) prev.src = URL.createObjectURL(b);
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  };
+  img.src = url;
+})();
+
+// Init FFmpeg
+async function initFFmpeg() {
+  if (ffmpeg) return;
+  const overlay = document.getElementById('loadingOverlay');
+  const loadText = document.getElementById('loadText');
+  overlay.classList.add('active');
+  loadText.textContent = 'Cargando FFmpeg (primera vez puede tardar)...';
+
+  ffmpeg = new FFmpeg();
+  ffmpeg.on('progress', ({ progress }) => {
+    const pbar = document.getElementById('progressBar');
+    if (pbar) pbar.style.width = Math.round(progress * 100) + '%';
+  });
+
+  await ffmpeg.load({
+    coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+    wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
+  });
+
+  overlay.classList.remove('active');
+}
+
+// Steps
+function goStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('dot' + i);
+    dot.classList.remove('active', 'done');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
+  }
+}
+
+// STEP 1: Upload
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+const uploadStatus = document.getElementById('uploadStatus');
+
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleVideo(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', () => { if (fileInput.files[0]) handleVideo(fileInput.files[0]); });
+
+async function handleVideo(file) {
+  videoFile = file;
+  uploadStatus.textContent = 'Extrayendo frame...';
+
+  await initFFmpeg();
+
+  // Write video to FFmpeg virtual filesystem
+  const data = await fetchFile(file);
+  await ffmpeg.writeFile('input.mp4', data);
+
+  // Extract frame at 2 seconds
+  await ffmpeg.exec(['-i', 'input.mp4', '-ss', '00:00:02', '-frames:v', '1', '-y', 'frame.png']);
+  const frameData = await ffmpeg.readFile('frame.png');
+  const frameBlob = new Blob([frameData.buffer], { type: 'image/png' });
+  const frameUrl = URL.createObjectURL(frameBlob);
+
+  // Get video dimensions from a temp video element
+  const vid = document.createElement('video');
+  vid.preload = 'metadata';
+  vid.src = URL.createObjectURL(file);
+  await new Promise(r => vid.onloadedmetadata = r);
+  videoW = vid.videoWidth;
+  videoH = vid.videoHeight;
+  uploadStatus.textContent = `${file.name} — ${videoW}x${videoH}`;
+
+  // Load frame into canvas
+  const img = new Image();
+  img.onload = () => {
+    frameImg = img;
+    const canvas = document.getElementById('frameCanvas');
+    const maxW = 860;
+    scaleRatio = img.width > maxW ? maxW / img.width : 1;
+    canvas.width = img.width * scaleRatio;
+    canvas.height = img.height * scaleRatio;
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    goStep(2);
+  };
+  img.src = frameUrl;
+}
+
+// STEP 2: Selection — 100% canvas-based
+const canvas = document.getElementById('frameCanvas');
+const canvasCtx = canvas.getContext('2d');
+const selectionInfo = document.getElementById('selectionInfo');
+const slidersPanel = document.getElementById('slidersPanel');
+const sliderX = document.getElementById('sliderX');
+const sliderY = document.getElementById('sliderY');
+const sliderW = document.getElementById('sliderW');
+const sliderH = document.getElementById('sliderH');
+
+const HANDLE_SIZE = 10;
+let dragMode = null;
+let startX = 0, startY = 0;
+let selStart = { x: 0, y: 0, w: 0, h: 0 };
+let sel = { x: 0, y: 0, w: 0, h: 0 };
+let hasSelection = false;
+
+function getPointer(e) {
+  const rect = canvas.getBoundingClientRect();
+  const src = e.touches ? e.touches[0] : e;
+  const sx = canvas.width / rect.width;
+  const sy = canvas.height / rect.height;
+  return {
+    x: Math.min(Math.max((src.clientX - rect.left) * sx, 0), canvas.width),
+    y: Math.min(Math.max((src.clientY - rect.top) * sy, 0), canvas.height)
+  };
+}
+
+function clampSel() {
+  sel.w = Math.max(20, sel.w);
+  sel.h = Math.max(20, sel.h);
+  sel.x = Math.max(0, Math.min(sel.x, canvas.width - sel.w));
+  sel.y = Math.max(0, Math.min(sel.y, canvas.height - sel.h));
+  sel.w = Math.min(sel.w, canvas.width - sel.x);
+  sel.h = Math.min(sel.h, canvas.height - sel.y);
+}
+
+function drawSelection() {
+  canvasCtx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+  if (!hasSelection || sel.w < 5) return;
+  canvasCtx.fillStyle = 'rgba(0,0,0,0.45)';
+  canvasCtx.fillRect(0, 0, canvas.width, sel.y);
+  canvasCtx.fillRect(0, sel.y + sel.h, canvas.width, canvas.height - sel.y - sel.h);
+  canvasCtx.fillRect(0, sel.y, sel.x, sel.h);
+  canvasCtx.fillRect(sel.x + sel.w, sel.y, canvas.width - sel.x - sel.w, sel.h);
+  canvasCtx.strokeStyle = '#f5576c';
+  canvasCtx.lineWidth = 2;
+  canvasCtx.strokeRect(sel.x, sel.y, sel.w, sel.h);
+  const hs = HANDLE_SIZE;
+  [[sel.x, sel.y], [sel.x + sel.w, sel.y], [sel.x, sel.y + sel.h], [sel.x + sel.w, sel.y + sel.h]].forEach(([cx, cy]) => {
+    canvasCtx.fillStyle = '#f5576c';
+    canvasCtx.fillRect(cx - hs/2, cy - hs/2, hs, hs);
+    canvasCtx.strokeStyle = '#fff';
+    canvasCtx.lineWidth = 1.5;
+    canvasCtx.strokeRect(cx - hs/2, cy - hs/2, hs, hs);
+  });
+}
+
+function updateSelectionUI() {
+  clampSel();
+  drawSelection();
+  selection = {
+    x: Math.round(sel.x / scaleRatio), y: Math.round(sel.y / scaleRatio),
+    w: Math.round(sel.w / scaleRatio), h: Math.round(sel.h / scaleRatio)
+  };
+  selectionInfo.textContent = `Zona: ${selection.w}x${selection.h} en (${selection.x}, ${selection.y})`;
+  sliderX.max = videoW - selection.w; sliderY.max = videoH - selection.h;
+  sliderW.max = videoW - selection.x; sliderH.max = videoH - selection.y;
+  sliderX.value = selection.x; sliderY.value = selection.y;
+  sliderW.value = selection.w; sliderH.value = selection.h;
+  document.getElementById('valX').textContent = selection.x;
+  document.getElementById('valY').textContent = selection.y;
+  document.getElementById('valW').textContent = selection.w;
+  document.getElementById('valH').textContent = selection.h;
+}
+
+function finalizeSelection() {
+  if (sel.w > 10 && sel.h > 10) {
+    hasSelection = true;
+    slidersPanel.classList.add('visible');
+    document.getElementById('btnStep2Next').disabled = false;
+    updateSelectionUI();
+  } else {
+    selectionInfo.textContent = 'Seleccion muy pequena, intenta de nuevo';
+  }
+}
+
+function onSliderChange() {
+  sel.x = parseInt(sliderX.value) * scaleRatio;
+  sel.y = parseInt(sliderY.value) * scaleRatio;
+  sel.w = parseInt(sliderW.value) * scaleRatio;
+  sel.h = parseInt(sliderH.value) * scaleRatio;
+  hasSelection = true;
+  updateSelectionUI();
+}
+
+function hitTest(p) {
+  if (!hasSelection) return 'draw';
+  const hs = HANDLE_SIZE * 1.5;
+  if (Math.abs(p.x - sel.x) < hs && Math.abs(p.y - sel.y) < hs) return 'tl';
+  if (Math.abs(p.x - (sel.x + sel.w)) < hs && Math.abs(p.y - sel.y) < hs) return 'tr';
+  if (Math.abs(p.x - sel.x) < hs && Math.abs(p.y - (sel.y + sel.h)) < hs) return 'bl';
+  if (Math.abs(p.x - (sel.x + sel.w)) < hs && Math.abs(p.y - (sel.y + sel.h)) < hs) return 'br';
+  if (p.x >= sel.x && p.x <= sel.x + sel.w && p.y >= sel.y && p.y <= sel.y + sel.h) return 'move';
+  return 'draw';
+}
+
+function updateCursor(e) {
+  if (dragMode) return;
+  const p = getPointer(e);
+  const cursors = { tl: 'nwse-resize', tr: 'nesw-resize', bl: 'nesw-resize', br: 'nwse-resize', move: 'move', draw: 'crosshair' };
+  canvas.style.cursor = cursors[hitTest(p)] || 'crosshair';
+}
+
+function onPointerDown(e) {
+  if (e.target !== canvas) return;
+  if (e.cancelable) e.preventDefault();
+  const p = getPointer(e);
+  dragMode = hitTest(p);
+  selStart = { ...sel };
+  startX = p.x; startY = p.y;
+  if (dragMode === 'draw') { sel = { x: p.x, y: p.y, w: 0, h: 0 }; hasSelection = false; }
+}
+
+function onPointerMove(e) {
+  if (!dragMode) { updateCursor(e); return; }
+  if (e.cancelable) e.preventDefault();
+  const p = getPointer(e);
+  const dx = p.x - startX, dy = p.y - startY;
+  if (dragMode === 'draw') {
+    sel.x = Math.min(startX, p.x); sel.y = Math.min(startY, p.y);
+    sel.w = Math.abs(p.x - startX); sel.h = Math.abs(p.y - startY);
+    hasSelection = true; drawSelection();
+  } else if (dragMode === 'move') {
+    sel.x = selStart.x + dx; sel.y = selStart.y + dy; updateSelectionUI();
+  } else {
+    if (dragMode === 'br') { sel.w = Math.max(20, selStart.w + dx); sel.h = Math.max(20, selStart.h + dy); }
+    else if (dragMode === 'bl') { sel.x = selStart.x + dx; sel.w = Math.max(20, selStart.w - dx); sel.h = Math.max(20, selStart.h + dy); }
+    else if (dragMode === 'tr') { sel.y = selStart.y + dy; sel.w = Math.max(20, selStart.w + dx); sel.h = Math.max(20, selStart.h - dy); }
+    else if (dragMode === 'tl') { sel.x = selStart.x + dx; sel.y = selStart.y + dy; sel.w = Math.max(20, selStart.w - dx); sel.h = Math.max(20, selStart.h - dy); }
+    updateSelectionUI();
+  }
+}
+
+function onPointerUp() { if (!dragMode) return; const m = dragMode; dragMode = null; if (m === 'draw') finalizeSelection(); }
+
+canvas.addEventListener('mousedown', onPointerDown);
+document.addEventListener('mousemove', onPointerMove);
+document.addEventListener('mouseup', onPointerUp);
+canvas.addEventListener('touchstart', onPointerDown, { passive: false });
+document.addEventListener('touchmove', onPointerMove, { passive: false });
+document.addEventListener('touchend', onPointerUp);
+
+// STEP 3: Mode
+function selectMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`.mode-card[data-mode="${mode}"]`).classList.add('selected');
+  document.getElementById('logoUpload').classList.toggle('visible', mode === 'logo');
+  document.getElementById('brandPreview').classList.toggle('visible', mode === 'brand');
+}
+
+const logoInput = document.getElementById('logoInput');
+const logoPreview = document.getElementById('logoPreview');
+logoInput.addEventListener('change', async () => {
+  if (!logoInput.files[0]) return;
+  const file = logoInput.files[0];
+  if (file.type === 'image/svg+xml' || file.name.endsWith('.svg')) {
+    const text = await file.text();
+    const blob = new Blob([text], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      const scale = 1024 / (img.naturalWidth || 200);
+      c.width = (img.naturalWidth || 200) * scale;
+      c.height = (img.naturalHeight || 200) * scale;
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(pngBlob => {
+        logoFile = new File([pngBlob], file.name.replace(/\.svg$/i, '.png'), { type: 'image/png' });
+        logoPreview.src = URL.createObjectURL(logoFile);
+        logoPreview.style.display = 'block';
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    };
+    img.src = url;
+  } else {
+    logoFile = file;
+    logoPreview.src = URL.createObjectURL(file);
+    logoPreview.style.display = 'block';
+  }
+});
+
+// STEP 4: Formats & Process
+function toggleFormat(el) { el.classList.toggle('selected'); }
+function getSelectedFormats() { return [...document.querySelectorAll('.format-card.selected')].map(c => c.dataset.format); }
+
+const FORMATS = {
+  'original': { w: null, h: null, label: 'Original (sin recorte)' },
+  'instagram-feed': { w: 1080, h: 1080, label: 'Instagram Feed (1080x1080)' },
+  'instagram-reel': { w: 1080, h: 1920, label: 'Instagram Reel/Story (1080x1920)' },
+  'facebook': { w: 1280, h: 720, label: 'Facebook (1280x720)' },
+  'linkedin': { w: 1280, h: 720, label: 'LinkedIn (1280x720)' }
+};
+
+async function processVideo() {
+  const formats = getSelectedFormats();
+  if (!formats.length || !selection) return;
+
+  const btn = document.getElementById('btnProcess');
+  btn.disabled = true;
+  const progressArea = document.getElementById('progressArea');
+  const progressBar = document.getElementById('progressBar');
+  const processStatus = document.getElementById('processStatus');
+  const resultsArea = document.getElementById('resultsArea');
+  const resultsList = document.getElementById('resultsList');
+
+  progressArea.style.display = 'block';
+  resultsArea.style.display = 'none';
+  resultsList.innerHTML = '';
+
+  // Write logo to FFmpeg filesystem if needed
+  const useLogoMode = (currentMode === 'brand' || currentMode === 'logo');
+  if (useLogoMode) {
+    let logoData;
+    if (currentMode === 'brand' && brandLogoBlob) {
+      logoData = await fetchFile(brandLogoBlob);
+    } else if (currentMode === 'logo' && logoFile) {
+      logoData = await fetchFile(logoFile);
+    }
+    if (logoData) {
+      await ffmpeg.writeFile('logo.png', logoData);
+    }
+  }
+
+  const results = [];
+  const cx = selection.x, cy = selection.y, cw = selection.w, ch = selection.h;
+
+  for (let i = 0; i < formats.length; i++) {
+    const fmt = formats[i];
+    const config = FORMATS[fmt];
+    processStatus.textContent = `Procesando ${fmt} (${i + 1}/${formats.length})...`;
+    progressBar.style.width = Math.round(((i) / formats.length) * 100) + '%';
+
+    const outName = `output_${fmt}.mp4`;
+
+    try {
+      let args;
+      const targetW = config.w || videoW;
+      const targetH = config.h || videoH;
+
+      // Calculate cover coordinates for this format
+      let tcx = cx, tcy = cy, tcw = cw, tch = ch;
+
+      if (fmt === 'instagram-reel') {
+        // Blur background approach
+        const videoScale = targetW / videoW;
+        const scaledH = Math.round(videoH * videoScale);
+        const offsetY = Math.round((targetH - scaledH) / 2);
+        tcx = Math.round(cx * videoScale);
+        tcy = Math.round(cy * videoScale) + offsetY;
+        tcw = Math.round(cw * videoScale);
+        tch = Math.round(ch * videoScale);
+
+        if (useLogoMode) {
+          const fc = [
+            `[0:v]scale=${targetW}:${targetH}:force_original_aspect_ratio=increase,crop=${targetW}:${targetH},boxblur=20:5[bg]`,
+            `[0:v]scale=${targetW}:-1[main]`,
+            `[bg][main]overlay=0:${offsetY}[comp]`,
+            `[1:v]scale=${tcw}:${tch}[logo]`,
+            `[comp][logo]overlay=${tcx}+(${tcw}-overlay_w)/2:${tcy}+(${tch}-overlay_h)/2`
+          ].join(';');
+          args = ['-i', 'input.mp4', '-i', 'logo.png', '-filter_complex', fc, '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-y', outName];
+        } else {
+          const fc = [
+            `[0:v]scale=${targetW}:${targetH}:force_original_aspect_ratio=increase,crop=${targetW}:${targetH},boxblur=20:5[bg]`,
+            `[0:v]scale=${targetW}:-1[main]`,
+            `[bg][main]overlay=0:${offsetY}[comp]`,
+            `[comp]drawbox=x=${tcx}:y=${tcy}:w=${tcw}:h=${tch}:color=black@0.95:t=fill`
+          ].join(';');
+          args = ['-i', 'input.mp4', '-filter_complex', fc, '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-y', outName];
+        }
+      } else if (fmt === 'instagram-feed') {
+        const cropS = Math.min(videoW, videoH);
+        const cropX = Math.round((videoW - cropS) / 2);
+        const scaleF = targetW / cropS;
+        tcx = Math.round((cx - cropX) * scaleF);
+        tcy = Math.round(cy * scaleF);
+        tcw = Math.round(cw * scaleF);
+        tch = Math.round(ch * scaleF);
+
+        if (useLogoMode) {
+          const fc = `[0:v]crop=${cropS}:${cropS}:${cropX}:0,scale=${targetW}:${targetH}[base];[1:v]scale=${tcw}:${tch}[logo];[base][logo]overlay=${tcx}+(${tcw}-overlay_w)/2:${tcy}+(${tch}-overlay_h)/2`;
+          args = ['-i', 'input.mp4', '-i', 'logo.png', '-filter_complex', fc, '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-y', outName];
+        } else {
+          const vf = `crop=${cropS}:${cropS}:${cropX}:0,scale=${targetW}:${targetH},drawbox=x=${tcx}:y=${tcy}:w=${tcw}:h=${tch}:color=black@0.95:t=fill`;
+          args = ['-i', 'input.mp4', '-vf', vf, '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-y', outName];
+        }
+      } else if (fmt === 'original') {
+        if (useLogoMode) {
+          const fc = `[1:v]scale=${tcw}:${tch}[logo];[0:v][logo]overlay=${tcx}+(${tcw}-overlay_w)/2:${tcy}+(${tch}-overlay_h)/2`;
+          args = ['-i', 'input.mp4', '-i', 'logo.png', '-filter_complex', fc, '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-y', outName];
+        } else {
+          args = ['-i', 'input.mp4', '-vf', `drawbox=x=${tcx}:y=${tcy}:w=${tcw}:h=${tch}:color=black@0.95:t=fill`, '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-y', outName];
+        }
+      } else {
+        // Facebook / LinkedIn: scale + pad
+        const scaleF = Math.min(targetW / videoW, targetH / videoH);
+        const scaledW = Math.round(videoW * scaleF);
+        const scaledH = Math.round(videoH * scaleF);
+        const padX = Math.round((targetW - scaledW) / 2);
+        const padY = Math.round((targetH - scaledH) / 2);
+        tcx = Math.round((cx / videoW) * scaledW) + padX;
+        tcy = Math.round((cy / videoH) * scaledH) + padY;
+        tcw = Math.round((cw / videoW) * scaledW);
+        tch = Math.round((ch / videoH) * scaledH);
+
+        if (useLogoMode) {
+          const fc = `[0:v]scale=${targetW}:${targetH}:force_original_aspect_ratio=decrease,pad=${targetW}:${targetH}:(ow-iw)/2:(oh-ih)/2:color=black[base];[1:v]scale=${tcw}:${tch}[logo];[base][logo]overlay=${tcx}+(${tcw}-overlay_w)/2:${tcy}+(${tch}-overlay_h)/2`;
+          args = ['-i', 'input.mp4', '-i', 'logo.png', '-filter_complex', fc, '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-y', outName];
+        } else {
+          const vf = `scale=${targetW}:${targetH}:force_original_aspect_ratio=decrease,pad=${targetW}:${targetH}:(ow-iw)/2:(oh-ih)/2:color=black,drawbox=x=${tcx}:y=${tcy}:w=${tcw}:h=${tch}:color=black@0.95:t=fill`;
+          args = ['-i', 'input.mp4', '-vf', vf, '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '23', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', '-y', outName];
+        }
+      }
+
+      await ffmpeg.exec(args);
+      const outData = await ffmpeg.readFile(outName);
+      const blob = new Blob([outData.buffer], { type: 'video/mp4' });
+      const url = URL.createObjectURL(blob);
+      const sizeMB = (blob.size / 1024 / 1024).toFixed(1);
+      results.push({ format: fmt, label: config.label, url, file: outName, size: sizeMB + ' MB' });
+    } catch (err) {
+      console.error(`Error ${fmt}:`, err);
+      results.push({ format: fmt, label: config.label, error: true });
+    }
+  }
+
+  progressBar.style.width = '100%';
+  processStatus.textContent = 'Listo!';
+  resultsArea.style.display = 'block';
+
+  results.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'result-card' + (r.error ? ' error' : '');
+    if (r.error) {
+      div.innerHTML = `<div class="info"><div class="rlabel">${r.label}</div><div class="size">Error al procesar</div></div>`;
+    } else {
+      div.innerHTML = `<div class="info"><div class="rlabel">${r.label}</div><div class="size">${r.size}</div></div><a href="${r.url}" download="${r.file}">Descargar</a>`;
+    }
+    resultsList.appendChild(div);
+  });
+
+  btn.disabled = false;
+}
+
+// Copy functions
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text);
+  const btn = document.getElementById(id).parentElement.querySelector('.btn-copy');
+  btn.textContent = 'Copiado!';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+}
+
+function copyAll() {
+  const caption = document.getElementById('captionText').textContent;
+  const hashtags = document.getElementById('hashtagsText').textContent;
+  navigator.clipboard.writeText(caption + '\n\n' + hashtags);
+  const btn = document.querySelector('.btn-copy-all');
+  btn.textContent = 'Copiado!';
+  setTimeout(() => { btn.textContent = 'Copiar Todo (Caption + Hashtags)'; }, 2000);
+}
+
+function resetAll() {
+  videoFile = null; videoW = 0; videoH = 0;
+  frameImg = null; selection = null; logoFile = null;
+  sel = { x: 0, y: 0, w: 0, h: 0 }; hasSelection = false; dragMode = null;
+  document.getElementById('uploadStatus').textContent = '';
+  slidersPanel.classList.remove('visible');
+  document.getElementById('btnStep2Next').disabled = true;
+  document.getElementById('progressArea').style.display = 'none';
+  document.getElementById('resultsArea').style.display = 'none';
+  document.getElementById('logoPreview').style.display = 'none';
+  fileInput.value = '';
+  logoInput.value = '';
+  goStep(1);
+}
+</script>
+</body>
+</html>

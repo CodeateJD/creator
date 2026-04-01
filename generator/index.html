@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>codeateJD — Generador de Posts para Instagram y Facebook</title>
+<meta name="description" content="Generador gratuito de imagenes para Instagram y Facebook. Code tips, proyectos, servicios, testimonios y portadas con avatares, animaciones y paletas de colores. Por codeateJD.">
+<meta name="keywords" content="generador posts instagram, creador imagenes redes sociales, code tips, developer content, codeateJD, social media tool, post maker gratis">
+<meta name="author" content="Jose Delpino — codeateJD">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://jdelpino78.github.io/codeateJD/generator/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jdelpino78.github.io/codeateJD/generator/">
+<meta property="og:title" content="codeateJD — Generador de Posts para Redes Sociales">
+<meta property="og:description" content="Crea posts profesionales para Instagram y Facebook con code tips, proyectos, servicios y mas. Gratis, sin registro.">
+<meta property="og:image" content="https://jdelpino78.github.io/codeateJD/img/og-cover.png">
+<meta property="og:locale" content="es_VE">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+  .layout { display: grid; grid-template-columns: 350px 1fr; min-height: 100vh; }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    background: #1e293b; border-right: 1px solid #334155;
+    padding: 20px; overflow-y: auto; max-height: 100vh;
+  }
+  .sidebar h1 { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+  .sidebar h1 span { background: linear-gradient(90deg, #f093fb, #f5576c, #ffd200, #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .sidebar .sub { font-size: 12px; color: #64748b; margin-bottom: 20px; }
+
+  .section-title {
+    font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;
+    letter-spacing: 1.5px; margin-bottom: 8px; margin-top: 16px;
+  }
+
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 11px; font-weight: 600; color: #94a3b8; margin-bottom: 3px; }
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid #334155;
+    background: #0f172a; color: #e2e8f0; font-size: 13px; font-family: 'Inter', sans-serif;
+  }
+  .form-group textarea { resize: vertical; min-height: 55px; }
+  .form-group input:focus, .form-group textarea:focus { outline: none; border-color: #667eea; }
+
+  /* Buttons grid */
+  .templates { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+  .tpl-btn {
+    padding: 9px 6px; border-radius: 8px; border: 2px solid #334155;
+    background: transparent; color: #94a3b8; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all 0.3s; text-align: center;
+  }
+  .tpl-btn:hover { border-color: #667eea; color: #fff; }
+  .tpl-btn.active { border-color: #667eea; background: rgba(102,126,234,0.1); color: #fff; }
+
+  /* Size toggle */
+  .size-toggle { display: flex; gap: 6px; margin-bottom: 12px; }
+  .size-btn {
+    flex: 1; padding: 7px 4px; border-radius: 8px; border: 1px solid #334155;
+    background: transparent; color: #94a3b8; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all 0.3s; text-align: center;
+  }
+  .size-btn.active { border-color: #667eea; background: rgba(102,126,234,0.1); color: #fff; }
+
+  /* Palette */
+  .palettes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 8px; }
+  .pal-btn {
+    height: 28px; border-radius: 6px; border: 2px solid transparent;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .pal-btn:hover { transform: scale(1.1); }
+  .pal-btn.active { border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+  .pal-label { font-size: 8px; text-align: center; color: #475569; font-weight: 600; text-transform: uppercase; }
+
+  .btn-rnd-palette {
+    width: 100%; padding: 6px; border-radius: 8px; border: 1px dashed #334155;
+    background: transparent; color: #64748b; font-size: 11px; font-weight: 600;
+    cursor: pointer; transition: all 0.3s; margin-bottom: 12px;
+  }
+  .btn-rnd-palette:hover { border-color: #fbbf24; color: #fbbf24; }
+
+  /* Avatar toggle */
+  .avatar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .avatar-row label { font-size: 12px; color: #94a3b8; cursor: pointer; flex: 1; }
+  .avatar-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: #667eea; }
+  .btn-avatar-shuffle {
+    padding: 4px 10px; border-radius: 6px; border: 1px solid #334155;
+    background: transparent; color: #64748b; font-size: 11px; cursor: pointer;
+  }
+  .btn-avatar-shuffle:hover { border-color: #667eea; color: #fff; }
+
+  /* Random button */
+  .btn-random {
+    width: 100%; padding: 11px; border-radius: 10px; border: 2px dashed #334155;
+    background: transparent; color: #94a3b8; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.3s; margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-random:hover { border-color: #fbbf24; color: #fbbf24; background: rgba(251,191,36,0.05); }
+
+  .content-counter {
+    display: inline-block; font-size: 10px; font-weight: 700; color: #667eea;
+    background: rgba(102,126,234,0.15); padding: 2px 8px; border-radius: 20px;
+  }
+
+  /* Download buttons */
+  .download-row { display: flex; gap: 8px; margin-top: 16px; }
+  .btn-download {
+    flex: 1; padding: 12px 8px; border-radius: 10px; border: none;
+    color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s;
+  }
+  .btn-download:hover { transform: translateY(-2px); }
+  .btn-dl-ig { background: linear-gradient(135deg, #667eea, #764ba2); }
+  .btn-dl-ig:hover { box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+  .btn-dl-fb { background: linear-gradient(135deg, #1877f2, #0d5fc4); }
+  .btn-dl-fb:hover { box-shadow: 0 6px 20px rgba(24,119,242,0.4); }
+
+  /* ── Caption / Accessibility panel ── */
+  .caption-panel { margin-top: 18px; }
+  .caption-block {
+    background: #0f172a; border: 1px solid #334155; border-radius: 10px;
+    padding: 12px; margin-bottom: 10px; position: relative;
+  }
+  .caption-block .caption-label {
+    font-size: 10px; font-weight: 700; color: #64748b; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+  }
+  .caption-block .caption-text {
+    font-size: 12px; color: #cbd5e1; line-height: 1.6; white-space: pre-wrap;
+    max-height: 160px; overflow-y: auto;
+  }
+  .caption-block .caption-text.hashtags {
+    color: #667eea; font-size: 11px; line-height: 1.8;
+  }
+  .caption-block .caption-text.alt-text {
+    color: #94a3b8; font-style: italic; font-size: 11px;
+  }
+  .btn-copy {
+    position: absolute; top: 10px; right: 10px; padding: 4px 10px;
+    border-radius: 6px; border: 1px solid #334155; background: transparent;
+    color: #64748b; font-size: 10px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-copy:hover { border-color: #4ade80; color: #4ade80; }
+  .btn-copy.copied { border-color: #4ade80; color: #4ade80; }
+  .btn-copy-all {
+    width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #334155;
+    background: rgba(74,222,128,0.05); color: #4ade80; font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-copy-all:hover { background: rgba(74,222,128,0.1); border-color: #4ade80; }
+
+  /* ── Preview area ── */
+  .preview-area {
+    display: flex; align-items: center; justify-content: center;
+    padding: 30px; background: #0f172a;
+    background-image: radial-gradient(circle at 50% 50%, rgba(102,126,234,0.03) 0%, transparent 70%);
+    overflow: auto;
+  }
+  .preview-frame {
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+
+  /* ══════════ POST ══════════ */
+  .post {
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 70px 50px;
+    font-family: 'Inter', sans-serif;
+  }
+  .post.size-post { width: 540px; height: 540px; }
+  .post.size-story { width: 540px; height: 960px; }
+  .post.size-fb { width: 600px; height: 315px; padding: 45px 50px; animation: none !important; background-size: 100% 100% !important; }
+
+  /* ── Decorations hidden (don't export well with html2canvas) ── */
+  .particles, .glow-orbs, .scanlines { display: none; }
+
+  /* ── Content ── */
+  .post-content {
+    position: relative; z-index: 5;
+    width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+  }
+
+  /* ── Template: Code Tip ── */
+  .post.tpl-tip .post-tag {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
+    color: var(--accent, #4ade80); margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .post.tpl-tip .post-title { font-size: 26px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 20px; }
+  .post.tpl-tip .post-code {
+    background: #141425; border: 1px solid #2a2a4a; border-radius: 12px;
+    padding: 18px 22px; text-align: left; width: 100%;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.7; color: #e0e0e0;
+    white-space: pre-wrap;
+  }
+  .post.tpl-tip .post-code .kw { color: #c792ea; }
+  .post.tpl-tip .post-code .fn { color: #82aaff; }
+  .post.tpl-tip .post-code .str { color: #c3e88d; }
+  .post.tpl-tip .post-code .cm { color: #546e7a; }
+
+  .post.size-fb.tpl-tip .post-title { font-size: 22px; margin-bottom: 14px; }
+  .post.size-fb.tpl-tip .post-code { font-size: 11px; padding: 14px 18px; }
+  .post.size-fb .post-tag { font-size: 10px; margin-bottom: 10px; }
+
+  /* ── Template: Project ── */
+  .post.tpl-project .post-tag {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
+    color: var(--accent, #38bdf8); margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .post.tpl-project .post-title { font-size: 30px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 14px; }
+  .post.tpl-project .post-desc { font-size: 15px; color: #e2e8f0; line-height: 1.6; margin-bottom: 20px; }
+  .post.tpl-project .post-techs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .post.tpl-project .tech-tag {
+    background: #1a2040; border: 1px solid #2a3060;
+    color: var(--accent, #38bdf8); padding: 5px 12px; border-radius: 8px;
+    font-size: 11px; font-weight: 700;
+  }
+  .post.size-fb.tpl-project .post-title { font-size: 24px; }
+  .post.size-fb.tpl-project .post-desc { font-size: 13px; margin-bottom: 14px; }
+
+  /* ── Template: Service ── */
+  .post.tpl-service .post-icon { font-size: 52px; margin-bottom: 16px; }
+  .post.tpl-service .post-title { font-size: 28px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 14px; }
+  .post.tpl-service .post-desc { font-size: 15px; color: #e2e8f0; line-height: 1.7; }
+  .post.tpl-service .post-cta {
+    margin-top: 20px; padding: 11px 30px; border-radius: 50px;
+    color: #fff; font-weight: 700; font-size: 13px; display: inline-block;
+  }
+  .post.size-fb.tpl-service .post-icon { font-size: 40px; margin-bottom: 10px; }
+  .post.size-fb.tpl-service .post-title { font-size: 22px; }
+  .post.size-fb.tpl-service .post-desc { font-size: 13px; }
+
+  /* ── Template: Quote ── */
+  .post.tpl-quote .quote-bubble {
+    position: relative; background: #1a1a35;
+    border: 1px solid #2a2a50; border-radius: 20px;
+    padding: 28px 32px; margin-bottom: 20px;
+    max-width: 100%;
+  }
+  .post.tpl-quote .quote-bubble::after {
+    content: ''; position: absolute; bottom: -12px; left: 50%;
+    transform: translateX(-50%); width: 0; height: 0;
+    border-left: 12px solid transparent; border-right: 12px solid transparent;
+    border-top: 12px solid #1a1a35;
+  }
+  .post.tpl-quote .post-quote-mark {
+    font-size: 48px; color: var(--accent, #667eea); line-height: 1; margin-bottom: 8px;
+  }
+  .post.tpl-quote .post-title {
+    font-size: 20px; font-weight: 600; color: #fff; line-height: 1.5;
+    font-style: italic;
+  }
+  .post.tpl-quote .avatar-area {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .post.tpl-quote .avatar-circle {
+    width: 64px; height: 64px; border-radius: 50%; overflow: hidden;
+    border: 3px solid var(--accent, #667eea);
+    background: #111122;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .post.tpl-quote .avatar-circle svg { width: 100%; height: 100%; }
+  .post.tpl-quote .post-author { font-size: 14px; font-weight: 700; color: var(--accent, #667eea); }
+  .post.tpl-quote .post-author-role { font-size: 11px; color: #64748b; }
+  .post.tpl-quote.no-avatar .quote-bubble::after { display: none; }
+
+  .post.size-fb.tpl-quote .quote-bubble { padding: 18px 24px; }
+  .post.size-fb.tpl-quote .post-quote-mark { font-size: 36px; }
+  .post.size-fb.tpl-quote .post-title { font-size: 16px; }
+  .post.size-fb.tpl-quote .avatar-circle { width: 48px; height: 48px; }
+
+  /* ── Tip avatar (small, top-left corner) ── */
+  .tip-avatar {
+    position: absolute; top: 24px; left: 24px; z-index: 2;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tip-avatar .av-circle {
+    width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
+    border: 2px solid var(--accent, #4ade80);
+    background: #111122;
+  }
+  .tip-avatar .av-circle svg { width: 100%; height: 100%; }
+  .tip-avatar .av-bubble {
+    background: #2a2a4a; border-radius: 12px 12px 12px 0;
+    padding: 4px 10px; font-size: 10px; color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Brand footer ── */
+  .post-brand {
+    position: absolute; bottom: 24px; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; z-index: 2;
+  }
+  .post-brand .brand-codeate { color: #ffffff; font-weight: 500; }
+  .post-brand .brand-jd {
+    background: #1a1a1a; color: #fff; padding: 2px 8px; border-radius: 5px;
+    font-weight: 800; font-size: 11px;
+  }
+  .post-brand .brand-jd .gt { color: var(--accent, #4ade80); font-weight: 500; }
+
+  /* ── Deco ── */
+  .post .deco-dots {
+    position: absolute; top: 26px; right: 26px;
+    display: flex; gap: 6px; z-index: 2;
+  }
+  .post .deco-dots span { width: 8px; height: 8px; border-radius: 50%; }
+  .post .deco-dots span:nth-child(1) { background: #ff5f57; }
+  .post .deco-dots span:nth-child(2) { background: #febc2e; }
+  .post .deco-dots span:nth-child(3) { background: #28c840; }
+
+  .post .deco-line {
+    position: absolute; top: 0; left: 0; right: 0; height: 5px; z-index: 2;
+  }
+
+  /* ── Template: Cover (Portada) ── */
+  .post.tpl-cover .cover-badge {
+    display: inline-block; padding: 8px 22px; border-radius: 50px;
+    background: var(--accent, #4ade80); border: none;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+    color: #000; text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+  .post.tpl-cover .post-title {
+    font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 18px;
+    color: #fff;
+  }
+  .post.tpl-cover .cover-subtitle {
+    font-size: 18px; color: #ffffff; line-height: 1.5; margin-bottom: 24px;
+    max-width: 90%;
+  }
+  .post.tpl-cover .cover-divider {
+    width: 80px; height: 4px; border-radius: 2px; background: var(--accent, #4ade80);
+  }
+  .post.tpl-cover .cover-logo {
+    width: 80px; height: 80px; border-radius: 16px; overflow: hidden;
+    border: 2px solid #3a3a5a; background: #111122;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+  }
+  .post.tpl-cover .cover-logo img {
+    width: 100%; height: 100%; object-fit: contain; padding: 8px;
+  }
+  .post.tpl-cover .cover-logo .logo-placeholder {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: #64748b; font-weight: 700;
+  }
+  .post.size-fb.tpl-cover .post-title { font-size: 28px; }
+  .post.size-fb.tpl-cover .cover-subtitle { font-size: 13px; }
+  .post.size-fb.tpl-cover .cover-logo { width: 56px; height: 56px; border-radius: 12px; margin-bottom: 14px; }
+  .post.size-story.tpl-cover .post-title { font-size: 42px; }
+
+  /* ── Template: Logos ── */
+  .post.tpl-logos .post-tag {
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
+    color: var(--accent, #38bdf8); margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .post.tpl-logos .post-title {
+    font-size: 28px; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 8px;
+  }
+  .post.tpl-logos .logos-subtitle {
+    font-size: 14px; color: #e2e8f0; margin-bottom: 24px;
+  }
+  .post.tpl-logos .logos-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    width: 100%; max-width: 380px;
+  }
+  .post.tpl-logos .logo-cell {
+    aspect-ratio: 1; border-radius: 14px; overflow: hidden;
+    background: #1a1a35; border: 1px solid #2a2a50;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(10px); transition: transform 0.3s;
+    padding: 10px;
+  }
+  .post.tpl-logos .logo-cell img {
+    width: 100%; height: 100%; object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+  .post.tpl-logos .logo-cell.has-color img {
+    filter: none; opacity: 1;
+  }
+  .post.tpl-logos .logo-cell .logo-text {
+    font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700;
+    color: #94a3b8; text-align: center; text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .post.size-fb.tpl-logos .post-title { font-size: 22px; }
+  .post.size-fb.tpl-logos .logos-grid { gap: 10px; max-width: 300px; }
+  .post.size-fb.tpl-logos .logo-cell { border-radius: 10px; padding: 6px; }
+  .post.size-story.tpl-logos .logos-grid { max-width: 340px; gap: 16px; }
+
+  /* Logo upload styling */
+  .logo-upload-area {
+    border: 2px dashed #334155; border-radius: 10px; padding: 14px;
+    text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 12px;
+  }
+  .logo-upload-area:hover { border-color: #667eea; background: rgba(102,126,234,0.05); }
+  .logo-upload-area .upload-text { font-size: 12px; color: #64748b; }
+  .logo-upload-area input { display: none; }
+  .logo-thumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .logo-thumb {
+    width: 40px; height: 40px; border-radius: 6px; overflow: hidden;
+    border: 1px solid #334155; position: relative; background: #0f172a;
+  }
+  .logo-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+  .logo-thumb .remove-logo {
+    position: absolute; top: -4px; right: -4px; width: 16px; height: 16px;
+    border-radius: 50%; background: #ef4444; color: #fff; border: none;
+    font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .color-logo-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .color-logo-row label { font-size: 11px; color: #94a3b8; flex: 1; }
+  .color-logo-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: #667eea; }
+
+  @media (max-width: 960px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { max-height: none; }
+    .preview-area { padding: 16px; }
+    .post.size-post { width: 340px; height: 340px; padding: 28px; }
+    .post.size-story { width: 260px; height: 462px; padding: 28px; }
+    .post.size-fb { width: 340px; height: 178px; padding: 20px 28px; }
+    .post .post-title { font-size: 18px !important; }
+    .post .post-code { font-size: 10px !important; padding: 10px !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- ── Controls ── -->
+  <div class="sidebar">
+    <h1>codeate<span>JD</span></h1>
+    <p class="sub">Generador de Posts — Instagram & Facebook</p>
+
+    <div class="section-title">Plantilla</div>
+    <div class="templates">
+      <button class="tpl-btn active" data-tpl="tip" onclick="setTemplate('tip')">&#128187; Code Tip</button>
+      <button class="tpl-btn" data-tpl="project" onclick="setTemplate('project')">&#128640; Proyecto</button>
+      <button class="tpl-btn" data-tpl="service" onclick="setTemplate('service')">&#9881;&#65039; Servicio</button>
+      <button class="tpl-btn" data-tpl="quote" onclick="setTemplate('quote')">&#128172; Testimonio</button>
+      <button class="tpl-btn" data-tpl="cover" onclick="setTemplate('cover')">&#127912; Portada</button>
+      <button class="tpl-btn" data-tpl="logos" onclick="setTemplate('logos')">&#11088; Logos</button>
+    </div>
+
+    <div class="section-title">Formato</div>
+    <div class="size-toggle">
+      <button class="size-btn active" data-sz="post" onclick="setSize('post')">IG Post</button>
+      <button class="size-btn" data-sz="story" onclick="setSize('story')">IG Story</button>
+      <button class="size-btn" data-sz="fb" onclick="setSize('fb')">Facebook</button>
+    </div>
+
+    <div class="section-title">Paleta de Colores</div>
+    <div class="palettes" id="palettePicker"></div>
+    <button class="btn-rnd-palette" onclick="randomPalette()">&#127912; Generar Color Aleatorio</button>
+
+    <div class="section-title">Colores Personalizados</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
+      <div class="form-group" style="margin:0">
+        <label>Primary</label>
+        <div style="display:flex;gap:4px;align-items:center">
+          <input type="color" id="customC1" value="#667eea" style="width:32px;height:28px;padding:0;border:1px solid #334155;border-radius:4px;cursor:pointer">
+          <input id="customC1Hex" value="#667eea" style="flex:1;padding:5px 6px;font-size:11px;font-family:'JetBrains Mono',monospace" oninput="syncColorFromHex(1)">
+        </div>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Secondary</label>
+        <div style="display:flex;gap:4px;align-items:center">
+          <input type="color" id="customC2" value="#764ba2" style="width:32px;height:28px;padding:0;border:1px solid #334155;border-radius:4px;cursor:pointer">
+          <input id="customC2Hex" value="#764ba2" style="flex:1;padding:5px 6px;font-size:11px;font-family:'JetBrains Mono',monospace" oninput="syncColorFromHex(2)">
+        </div>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Tertiary</label>
+        <div style="display:flex;gap:4px;align-items:center">
+          <input type="color" id="customC3" value="#4ade80" style="width:32px;height:28px;padding:0;border:1px solid #334155;border-radius:4px;cursor:pointer">
+          <input id="customC3Hex" value="#4ade80" style="flex:1;padding:5px 6px;font-size:11px;font-family:'JetBrains Mono',monospace" oninput="syncColorFromHex(3)">
+        </div>
+      </div>
+      <div class="form-group" style="margin:0">
+        <label>Quaternary</label>
+        <div style="display:flex;gap:4px;align-items:center">
+          <input type="color" id="customC4" value="#f093fb" style="width:32px;height:28px;padding:0;border:1px solid #334155;border-radius:4px;cursor:pointer">
+          <input id="customC4Hex" value="#f093fb" style="flex:1;padding:5px 6px;font-size:11px;font-family:'JetBrains Mono',monospace" oninput="syncColorFromHex(4)">
+        </div>
+      </div>
+    </div>
+    <button class="btn-rnd-palette" onclick="applyCustomColors()" style="border-style:solid;border-color:#334155">&#127912; Aplicar Colores Personalizados</button>
+
+    <div class="section-title">Avatar</div>
+    <div class="avatar-row">
+      <input type="checkbox" id="avatarToggle" checked onchange="updatePreview()">
+      <label for="avatarToggle">Mostrar avatar</label>
+      <button class="btn-avatar-shuffle" onclick="shuffleAvatar()">&#128100; Cambiar</button>
+    </div>
+
+    <!-- Auto-fill -->
+    <button class="btn-random" onclick="randomContent()">
+      <span style="font-size:18px">&#127922;</span> Contenido Aleatorio <span class="content-counter" id="counterBadge"></span>
+    </button>
+
+    <!-- TIP fields -->
+    <div id="fields-tip">
+      <div class="form-group">
+        <label>Etiqueta</label>
+        <input id="tip-tag" value="// JavaScript Tip" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Titulo</label>
+        <input id="tip-title" value="Usa async/await para codigo mas limpio" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Codigo</label>
+        <textarea id="tip-code" rows="5" oninput="updatePreview()">const data = await fetch(url);
+const json = await data.json();
+// Simple y elegante</textarea>
+      </div>
+    </div>
+
+    <!-- PROJECT fields -->
+    <div id="fields-project" style="display:none">
+      <div class="form-group">
+        <label>Etiqueta</label>
+        <input id="proj-tag" value="Proyecto" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Nombre del Proyecto</label>
+        <input id="proj-title" value="Simple Report" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Descripcion</label>
+        <textarea id="proj-desc" oninput="updatePreview()">Reporteador web empresarial con export a Excel y PDF</textarea>
+      </div>
+      <div class="form-group">
+        <label>Tecnologias (separadas por coma)</label>
+        <input id="proj-techs" value="Node.js, Express, SQL Server, ExcelJS" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- SERVICE fields -->
+    <div id="fields-service" style="display:none">
+      <div class="form-group">
+        <label>Icono (emoji)</label>
+        <input id="svc-icon" value="&#127760;" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Titulo</label>
+        <input id="svc-title" value="Desarrollo Web" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Descripcion</label>
+        <textarea id="svc-desc" oninput="updatePreview()">Paginas web rapidas, totalmente personalizadas</textarea>
+      </div>
+      <div class="form-group">
+        <label>Call to Action</label>
+        <input id="svc-cta" value="Contactame" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- QUOTE fields -->
+    <div id="fields-quote" style="display:none">
+      <div class="form-group">
+        <label>Testimonio</label>
+        <textarea id="quote-text" rows="3" oninput="updatePreview()">Excelente trabajo, el sistema quedo justo como lo necesitabamos</textarea>
+      </div>
+      <div class="form-group">
+        <label>Nombre</label>
+        <input id="quote-author" value="Carlos Mendez" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Cargo / Empresa</label>
+        <input id="quote-role" value="Gerente General, TechStore" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- COVER fields -->
+    <div id="fields-cover" style="display:none">
+      <div class="form-group">
+        <label>Badge / Etiqueta</label>
+        <input id="cover-badge" value="// Nuevo Post" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Titulo principal</label>
+        <input id="cover-title" value="codeateJD" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Estilo del titulo</label>
+        <select id="cover-gradient" onchange="updatePreview()" style="cursor:pointer">
+          <option value="0">Rainbow (rosa-rojo-dorado-azul)</option>
+          <option value="1">Fuego (rojo-naranja-amarillo)</option>
+          <option value="2">Oceano (cyan-azul-violeta)</option>
+          <option value="3">Amanecer (rosa-naranja-dorado)</option>
+          <option value="4">Matrix (verde-lima-esmeralda)</option>
+          <option value="5">Electrico (azul-cyan-blanco)</option>
+          <option value="6">Lava (rojo-magenta-rosa)</option>
+          <option value="7">Oro (dorado-ambar-bronce)</option>
+          <option value="8">Blanco solido</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Subtitulo</label>
+        <textarea id="cover-subtitle" rows="2" oninput="updatePreview()">Desarrollo web, apps moviles & soluciones IT</textarea>
+      </div>
+      <div class="form-group">
+        <label>Logo (imagen)</label>
+        <div class="logo-upload-area" onclick="document.getElementById('coverLogoInput').click()">
+          <input type="file" id="coverLogoInput" accept="image/*" onchange="handleCoverLogo(this)">
+          <div class="upload-text" id="coverLogoStatus">Click para subir logo</div>
+          <div id="coverLogoThumb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGOS fields -->
+    <div id="fields-logos" style="display:none">
+      <div class="form-group">
+        <label>Etiqueta</label>
+        <input id="logos-tag" value="Aliados Comerciales" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Titulo</label>
+        <input id="logos-title" value="Nuestros Aliados" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Subtitulo</label>
+        <input id="logos-subtitle" value="Empresas que confian en nosotros" oninput="updatePreview()">
+      </div>
+      <div class="color-logo-row">
+        <input type="checkbox" id="logosColorToggle" onchange="updatePreview()">
+        <label for="logosColorToggle">Mostrar logos a color (sin invertir)</label>
+      </div>
+      <div class="form-group">
+        <label>Logos (subir imagenes)</label>
+        <div class="logo-upload-area" onclick="document.getElementById('logosFileInput').click()">
+          <input type="file" id="logosFileInput" accept="image/*" multiple onchange="handleLogosUpload(this)">
+          <div class="upload-text">Click para subir logos (multiple)</div>
+        </div>
+        <div class="logo-thumbs" id="logosThumbs"></div>
+      </div>
+    </div>
+
+    <div class="download-row">
+      <button class="btn-download btn-dl-ig" onclick="downloadPost('ig')">&#11015;&#65039; Instagram</button>
+      <button class="btn-download btn-dl-fb" onclick="downloadPost('fb')">&#11015;&#65039; Facebook</button>
+    </div>
+
+    <!-- ── Caption / Accesibilidad ── -->
+    <div class="caption-panel">
+      <div class="section-title">Publicacion (copiar y pegar)</div>
+
+      <div class="caption-block">
+        <div class="caption-label">&#128221; Caption</div>
+        <button class="btn-copy" onclick="copyText('captionOutput')">Copiar</button>
+        <div class="caption-text" id="captionOutput"></div>
+      </div>
+
+      <div class="caption-block">
+        <div class="caption-label"># Hashtags</div>
+        <button class="btn-copy" onclick="copyText('hashtagsOutput')">Copiar</button>
+        <div class="caption-text hashtags" id="hashtagsOutput"></div>
+      </div>
+
+      <div class="caption-block">
+        <div class="caption-label">&#9855; Alt Text (accesibilidad)</div>
+        <button class="btn-copy" onclick="copyText('altTextOutput')">Copiar</button>
+        <div class="caption-text alt-text" id="altTextOutput"></div>
+      </div>
+
+      <button class="btn-copy-all" onclick="copyAll()">&#128203; Copiar Todo (Caption + Hashtags)</button>
+    </div>
+  </div>
+
+  <!-- ── Preview ── -->
+  <div class="preview-area">
+    <div class="preview-frame">
+      <div id="postCanvas" class="post tpl-tip size-post">
+        <!-- Animated background layers -->
+        <div class="glow-orbs" id="glowOrbs"></div>
+        <div class="particles" id="particles"></div>
+        <div class="scanlines"></div>
+
+        <div class="deco-line" id="decoLine"></div>
+        <div class="deco-dots"><span></span><span></span><span></span></div>
+
+        <!-- Tip avatar (corner) -->
+        <div class="tip-avatar" id="tipAvatar" style="display:none">
+          <div class="av-circle" id="tipAvatarSvg"></div>
+          <div class="av-bubble">codeateJD</div>
+        </div>
+
+        <!-- TIP content -->
+        <div id="content-tip" class="post-content">
+          <div class="post-tag" id="render-tip-tag">// JavaScript Tip</div>
+          <div class="post-title" id="render-tip-title">Usa async/await para codigo mas limpio</div>
+          <div class="post-code" id="render-tip-code"></div>
+        </div>
+
+        <!-- PROJECT content -->
+        <div id="content-project" class="post-content" style="display:none">
+          <div class="post-tag" id="render-proj-tag">Proyecto</div>
+          <div class="post-title" id="render-proj-title">Simple Report</div>
+          <div class="post-desc" id="render-proj-desc">Reporteador web empresarial</div>
+          <div class="post-techs" id="render-proj-techs"></div>
+        </div>
+
+        <!-- SERVICE content -->
+        <div id="content-service" class="post-content" style="display:none">
+          <div class="post-icon" id="render-svc-icon">&#127760;</div>
+          <div class="post-title" id="render-svc-title">Desarrollo Web</div>
+          <div class="post-desc" id="render-svc-desc">Paginas web rapidas</div>
+          <div class="post-cta" id="render-svc-cta">Contactame</div>
+        </div>
+
+        <!-- QUOTE content -->
+        <div id="content-quote" class="post-content" style="display:none">
+          <div class="quote-bubble">
+            <div class="post-quote-mark">"</div>
+            <div class="post-title" id="render-quote-text">Excelente trabajo</div>
+          </div>
+          <div class="avatar-area">
+            <div class="avatar-circle" id="quoteAvatarSvg"></div>
+            <div class="post-author" id="render-quote-author">Carlos</div>
+            <div class="post-author-role" id="render-quote-role">CEO</div>
+          </div>
+        </div>
+
+        <!-- COVER content -->
+        <div id="content-cover" class="post-content" style="display:none">
+          <div class="cover-logo" id="render-cover-logo" style="display:none"></div>
+          <div class="cover-badge" id="render-cover-badge">// Nuevo Post</div>
+          <div class="post-title" id="render-cover-title">codeateJD</div>
+          <div class="cover-subtitle" id="render-cover-subtitle">Desarrollo web, apps moviles & soluciones IT</div>
+          <div class="cover-divider" id="render-cover-divider"></div>
+        </div>
+
+        <!-- LOGOS content -->
+        <div id="content-logos" class="post-content" style="display:none">
+          <div class="post-tag" id="render-logos-tag">Aliados Comerciales</div>
+          <div class="post-title" id="render-logos-title">Nuestros Aliados</div>
+          <div class="logos-subtitle" id="render-logos-subtitle">Empresas que confian en nosotros</div>
+          <div class="logos-grid" id="render-logos-grid"></div>
+        </div>
+
+        <!-- Brand -->
+        <div class="post-brand">
+          <span class="brand-codeate">codeate</span>
+          <span class="brand-jd"><span class="gt">&gt;</span>JD</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   AVATAR GENERATOR — SVG characters
+   ══════════════════════════════════════════════ */
+
+const SKIN_TONES = ['#FDDCB5','#F5C4A1','#D4A574','#C18E60','#8D5E3C','#6B4226'];
+const HAIR_COLORS = ['#1a1a1a','#3b2314','#6b3a1f','#c7882a','#b8433e','#2c5f7c','#5c2d82'];
+const SHIRT_COLORS = ['#667eea','#a855f7','#10b981','#ef4444','#f59e0b','#06b6d4','#ec4899','#6366f1','#14b8a6','#f97316'];
+
+function buildAvatar(config) {
+  const { skin, hair, hairStyle, shirt, glasses, beard } = config;
+  let s = `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">`;
+  // Background
+  s += `<circle cx="60" cy="60" r="58" fill="${shirt}" opacity="0.12"/>`;
+  // Neck
+  s += `<rect x="52" y="72" width="16" height="12" rx="4" fill="${skin}"/>`;
+  // Body
+  s += `<path d="M28,110 C28,88 42,80 60,80 C78,80 92,88 92,110" fill="${shirt}"/>`;
+  // Collar
+  s += `<path d="M48,82 L60,95 L72,82" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1.5"/>`;
+  // Head
+  s += `<circle cx="60" cy="48" r="26" fill="${skin}"/>`;
+  // Ears
+  s += `<ellipse cx="34" cy="50" rx="5" ry="7" fill="${skin}"/>`;
+  s += `<ellipse cx="86" cy="50" rx="5" ry="7" fill="${skin}"/>`;
+
+  // Hair styles
+  if (hairStyle === 'short') {
+    s += `<path d="M34,42 C34,22 48,18 60,18 C72,18 86,22 86,42 C86,36 80,28 60,28 C40,28 34,36 34,42Z" fill="${hair}"/>`;
+  } else if (hairStyle === 'long') {
+    s += `<path d="M32,48 C32,20 45,14 60,14 C75,14 88,20 88,48 L88,65 C88,68 86,68 85,64 L85,48 C85,30 72,22 60,22 C48,22 35,30 35,48 L35,64 C34,68 32,68 32,65Z" fill="${hair}"/>`;
+  } else if (hairStyle === 'curly') {
+    s += `<path d="M34,45 C30,20 48,14 60,14 C72,14 90,20 86,45" fill="${hair}"/>`;
+    s += `<circle cx="36" cy="38" r="6" fill="${hair}"/>`;
+    s += `<circle cx="48" cy="22" r="7" fill="${hair}"/>`;
+    s += `<circle cx="60" cy="18" r="7" fill="${hair}"/>`;
+    s += `<circle cx="72" cy="22" r="7" fill="${hair}"/>`;
+    s += `<circle cx="84" cy="38" r="6" fill="${hair}"/>`;
+  } else if (hairStyle === 'buzz') {
+    s += `<path d="M36,44 C36,28 46,22 60,22 C74,22 84,28 84,44 C84,38 76,30 60,30 C44,30 36,38 36,44Z" fill="${hair}" opacity="0.6"/>`;
+  } else if (hairStyle === 'mohawk') {
+    s += `<path d="M52,44 C52,8 58,4 60,4 C62,4 68,8 68,44" fill="${hair}"/>`;
+    s += `<path d="M36,44 C36,30 46,24 60,24 C74,24 84,30 84,44 C84,38 76,32 60,32 C44,32 36,38 36,44Z" fill="${hair}" opacity="0.3"/>`;
+  } else if (hairStyle === 'bob') {
+    s += `<path d="M32,44 C32,20 46,16 60,16 C74,16 88,20 88,44 L88,58 C88,62 84,60 84,56 L84,44 C84,28 72,24 60,24 C48,24 36,28 36,44 L36,56 C36,60 32,62 32,58Z" fill="${hair}"/>`;
+  } else if (hairStyle === 'ponytail') {
+    s += `<path d="M34,42 C34,22 48,18 60,18 C72,18 86,22 86,42 C86,36 80,28 60,28 C40,28 34,36 34,42Z" fill="${hair}"/>`;
+    s += `<path d="M84,36 C92,36 96,42 94,58 C93,64 90,66 88,62 C86,58 88,44 84,40Z" fill="${hair}"/>`;
+  } else if (hairStyle === 'spiky') {
+    s += `<path d="M36,44 C36,28 46,22 60,22 C74,22 84,28 84,44" fill="${hair}"/>`;
+    s += `<polygon points="40,30 44,10 48,28" fill="${hair}"/>`;
+    s += `<polygon points="52,26 56,6 60,24" fill="${hair}"/>`;
+    s += `<polygon points="64,26 68,8 72,28" fill="${hair}"/>`;
+    s += `<polygon points="76,32 80,14 82,34" fill="${hair}"/>`;
+  }
+
+  // Beard
+  if (beard) {
+    s += `<path d="M44,56 C44,70 52,76 60,76 C68,76 76,70 76,56" fill="${hair}" opacity="0.5"/>`;
+    s += `<path d="M46,54 C46,66 52,72 60,72 C68,72 74,66 74,54" fill="${hair}" opacity="0.35"/>`;
+  }
+
+  // Eyes
+  s += `<ellipse cx="49" cy="48" rx="3" ry="3.5" fill="#1a1a1a"/>`;
+  s += `<ellipse cx="71" cy="48" rx="3" ry="3.5" fill="#1a1a1a"/>`;
+  s += `<circle cx="50" cy="47" r="1" fill="#fff" opacity="0.8"/>`;
+  s += `<circle cx="72" cy="47" r="1" fill="#fff" opacity="0.8"/>`;
+
+  // Eyebrows
+  s += `<path d="M44,42 Q49,39 54,42" stroke="#1a1a1a" fill="none" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>`;
+  s += `<path d="M66,42 Q71,39 76,42" stroke="#1a1a1a" fill="none" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>`;
+
+  // Glasses
+  if (glasses) {
+    s += `<circle cx="49" cy="48" r="9" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>`;
+    s += `<circle cx="71" cy="48" r="9" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>`;
+    s += `<line x1="58" y1="48" x2="62" y2="48" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>`;
+    s += `<line x1="40" y1="48" x2="34" y2="46" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>`;
+    s += `<line x1="80" y1="48" x2="86" y2="46" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>`;
+  }
+
+  // Smile
+  if (!beard) {
+    s += `<path d="M50,58 Q60,66 70,58" stroke="#1a1a1a" fill="none" stroke-width="2" stroke-linecap="round" opacity="0.4"/>`;
+  }
+
+  // Blush
+  s += `<circle cx="40" cy="55" r="5" fill="#ff9999" opacity="0.15"/>`;
+  s += `<circle cx="80" cy="55" r="5" fill="#ff9999" opacity="0.15"/>`;
+
+  s += `</svg>`;
+  return s;
+}
+
+const AVATAR_CONFIGS = [
+  { skin: '#FDDCB5', hair: '#1a1a1a', hairStyle: 'short', shirt: '#667eea', glasses: true, beard: false },
+  { skin: '#D4A574', hair: '#3b2314', hairStyle: 'long', shirt: '#a855f7', glasses: false, beard: false },
+  { skin: '#8D5E3C', hair: '#1a1a1a', hairStyle: 'curly', shirt: '#10b981', glasses: false, beard: false },
+  { skin: '#F5C4A1', hair: '#6b3a1f', hairStyle: 'bob', shirt: '#ef4444', glasses: true, beard: false },
+  { skin: '#C18E60', hair: '#1a1a1a', hairStyle: 'buzz', shirt: '#f59e0b', glasses: false, beard: true },
+  { skin: '#FDDCB5', hair: '#3b2314', hairStyle: 'ponytail', shirt: '#06b6d4', glasses: false, beard: false },
+  { skin: '#8D5E3C', hair: '#5c2d82', hairStyle: 'mohawk', shirt: '#ec4899', glasses: false, beard: false },
+  { skin: '#6B4226', hair: '#1a1a1a', hairStyle: 'curly', shirt: '#6366f1', glasses: true, beard: false },
+  { skin: '#F5C4A1', hair: '#c7882a', hairStyle: 'spiky', shirt: '#14b8a6', glasses: false, beard: false },
+  { skin: '#D4A574', hair: '#b8433e', hairStyle: 'long', shirt: '#f97316', glasses: true, beard: false },
+  { skin: '#C18E60', hair: '#2c5f7c', hairStyle: 'short', shirt: '#667eea', glasses: false, beard: true },
+  { skin: '#FDDCB5', hair: '#1a1a1a', hairStyle: 'bob', shirt: '#a855f7', glasses: false, beard: false },
+];
+
+let currentAvatar = 0;
+
+function getAvatarSvg() {
+  return buildAvatar(AVATAR_CONFIGS[currentAvatar]);
+}
+
+function shuffleAvatar() {
+  currentAvatar = (currentAvatar + 1) % AVATAR_CONFIGS.length;
+  updatePreview();
+}
+
+function randomAvatarIndex() {
+  currentAvatar = Math.floor(Math.random() * AVATAR_CONFIGS.length);
+}
+
+/* ══════════════════════════════════════════════
+   CONTENT LIBRARY
+   ══════════════════════════════════════════════ */
+
+const LIBRARY = {
+  tip: [
+    { tag: '// JavaScript Tip', title: 'Desestructuracion de objetos', code: 'const { name, age } = user;\nconst { data: items } = response;\n// Codigo mas limpio y legible' },
+    { tag: '// JavaScript Tip', title: 'Usa async/await para codigo mas limpio', code: 'const data = await fetch(url);\nconst json = await data.json();\n// Simple y elegante' },
+    { tag: '// JavaScript Tip', title: 'Optional Chaining evita errores', code: 'const city = user?.address?.city;\nconst first = arr?.[0];\nconst result = obj?.method?.();\n// Adios "Cannot read property"' },
+    { tag: '// JavaScript Tip', title: 'Array methods que debes dominar', code: 'const names = users.map(u => u.name);\nconst adults = users.filter(u => u.age>=18);\nconst total = prices.reduce((a,b) => a+b, 0);' },
+    { tag: '// JavaScript Tip', title: 'Nullish Coalescing ??', code: 'const port = config.port ?? 3000;\nconst name = user.name ?? "Anonimo";\n// Solo aplica si es null o undefined' },
+    { tag: '// JavaScript Tip', title: 'Template Literals para strings', code: 'const msg = `Hola ${name},\ntienes ${items.length} items`;\n// Multi-linea + interpolacion' },
+    { tag: '// JavaScript Tip', title: 'Spread: copia e inmutabilidad', code: 'const copy = [...originalArr];\nconst merged = { ...obj1, ...obj2 };\nconst updated = { ...user, age: 30 };' },
+    { tag: '// Node.js Tip', title: 'Variables de entorno con dotenv', code: 'import "dotenv/config";\nconst port = process.env.PORT;\nconst db = process.env.DB_URL;\n// Nunca hardcodees credenciales' },
+    { tag: '// Node.js Tip', title: 'Middleware en Express', code: 'app.use((req, res, next) => {\n  console.log(`${req.method} ${req.url}`);\n  next();\n});\n// Intercepta cada peticion' },
+    { tag: '// Node.js Tip', title: 'Error handler async en Express', code: 'const wrap = fn =>\n  (req, res, next) =>\n    Promise.resolve(fn(req, res, next))\n      .catch(next);\n// Envuelve tus rutas async' },
+    { tag: '// CSS Tip', title: 'Centra cualquier cosa con Grid', code: '.container {\n  display: grid;\n  place-items: center;\n  min-height: 100vh;\n}\n/* 3 lineas. Eso es todo. */' },
+    { tag: '// CSS Tip', title: 'Variables CSS para temas', code: ':root {\n  --primary: #667eea;\n  --bg: #0f172a;\n  --text: #e2e8f0;\n}\n.dark { --bg: #000; --text: #fff; }' },
+    { tag: '// Flutter Tip', title: 'const mejora el rendimiento', code: '// Malo\nContainer(\n  child: Text("Hola"),\n)\n// Bueno\nconst Text("Hola")\n// No reconstruye widgets const' },
+    { tag: '// Flutter Tip', title: 'Riverpod: providers simples', code: 'final counterProvider =\n  StateProvider<int>((ref) => 0);\n\nfinal count = ref.watch(counterProvider);\nref.read(counterProvider.notifier)\n  .state++;' },
+    { tag: '// Flutter Tip', title: 'Navegacion con GoRouter', code: 'GoRoute(\n  path: "/product/:id",\n  builder: (ctx, state) {\n    final id = state.pathParameters["id"];\n    return ProductScreen(id: id!);\n  },\n)' },
+    { tag: '// SQL Tip', title: 'CTEs hacen queries legibles', code: 'WITH ventas AS (\n  SELECT producto, SUM(total) monto\n  FROM facturas GROUP BY producto\n)\nSELECT * FROM ventas\nWHERE monto > 1000;' },
+    { tag: '// SQL Tip', title: 'Window Functions: ranking', code: 'SELECT nombre, ventas,\n  ROW_NUMBER() OVER(\n    ORDER BY ventas DESC\n  ) as ranking\nFROM vendedores;' },
+    { tag: '// Git Tip', title: 'Comandos Git que salvan el dia', code: 'git stash        # guarda cambios\ngit stash pop     # los restaura\ngit log --oneline # historial compacto\ngit diff --staged # pre-commit review' },
+    { tag: '// TypeScript Tip', title: 'Generics: funciones reutilizables', code: 'function first<T>(arr: T[]): T {\n  return arr[0];\n}\nconst n = first([1,2,3]);   // number\nconst s = first(["a","b"]); // string' },
+    { tag: '// React Tip', title: 'Custom Hook useLocalStorage', code: 'function useLocalStorage(key, init) {\n  const [val, set] = useState(\n    () => JSON.parse(\n      localStorage.getItem(key)\n    ) ?? init\n  );\n  useEffect(() => {\n    localStorage.setItem(key,\n      JSON.stringify(val));\n  }, [key, val]);\n  return [val, set];\n}' },
+    { tag: '// Cloud Tip', title: 'Docker: contenedores en 3 pasos', code: 'FROM node:20-alpine\nWORKDIR /app\nCOPY . .\nRUN npm ci --production\nEXPOSE 3000\nCMD ["node", "server.js"]\n# docker build -t myapp .' },
+    { tag: '// Cloud Tip', title: 'Variables de entorno en produccion', code: '# .env.production\nNODE_ENV=production\nDB_HOST=db.internal\nREDIS_URL=redis://cache:6379\n# Nunca subas .env a git\n# Usa secrets del proveedor cloud' },
+    { tag: '// Cloud Tip', title: 'Nginx como reverse proxy', code: 'server {\n  listen 80;\n  server_name miapp.com;\n  location / {\n    proxy_pass http://localhost:3000;\n    proxy_set_header Host $host;\n  }\n}\n# Escala horizontal facil' },
+    { tag: '// DevOps Tip', title: 'CI/CD con GitHub Actions', code: 'name: Deploy\non: push: branches: [main]\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - run: npm ci && npm test\n      - run: npm run build\n      # Deploy automatico en cada push' },
+    { tag: '// Servidor Tip', title: 'SSH seguro: solo llaves, no passwords', code: '# Generar llave SSH\nssh-keygen -t ed25519\n\n# Copiar al servidor\nssh-copy-id user@servidor\n\n# Desactivar password en sshd_config\nPasswordAuthentication no\n# Seguridad real en tu VPS' },
+    { tag: '// Servidor Tip', title: 'Firewall basico con UFW', code: 'sudo ufw default deny incoming\nsudo ufw default allow outgoing\nsudo ufw allow ssh\nsudo ufw allow 80/tcp\nsudo ufw allow 443/tcp\nsudo ufw enable\n# Servidor protegido en 6 lineas' },
+    { tag: '// Cloud Tip', title: 'Firebase Hosting: deploy en segundos', code: 'npm install -g firebase-tools\nfirebase init hosting\nfirebase deploy\n\n# SSL gratis, CDN global\n# Custom domain en 5 min\n# Ideal para SPAs y landing pages' },
+    { tag: '// Data Tip', title: 'Data Warehouse: ETL basico', code: '-- Extract: traer datos fuente\n-- Transform: limpiar y unificar\n-- Load: cargar al warehouse\nINSERT INTO warehouse.ventas\nSELECT fecha, producto, SUM(monto)\nFROM staging.raw_sales\nGROUP BY fecha, producto;' },
+    { tag: '// Data Tip', title: 'Indices en SQL: consultas 10x rapidas', code: '-- Sin indice: escanea TODA la tabla\n-- Con indice: busqueda directa\n\nCREATE INDEX idx_ventas_fecha\nON ventas (fecha, sucursal);\n\n-- Verifica con EXPLAIN\nEXPLAIN SELECT * FROM ventas\nWHERE fecha > "2026-01-01";' },
+    { tag: '// IoT Tip', title: 'MQTT: mensajeria para dispositivos', code: 'const mqtt = require("mqtt");\nconst client = mqtt.connect("mqtt://broker");\n\nclient.subscribe("sensores/temp");\nclient.on("message", (topic, msg) => {\n  console.log(`${topic}: ${msg}`);\n});\n// Protocolo ligero para IoT' },
+    { tag: '// Cloud Tip', title: 'PM2: tu app Node siempre activa', code: 'npm install -g pm2\n\npm2 start server.js --name "api"\npm2 startup   # auto-arranque\npm2 save       # guardar config\npm2 monit      # monitorear\n# Reinicio automatico si crashea' },
+    { tag: '// Servidor Tip', title: 'Backup automatico con cron', code: '# Backup diario a las 3am\n0 3 * * * pg_dump mydb > /backups/db_$(date +\\%F).sql\n\n# Limpiar backups > 30 dias\n0 4 * * * find /backups -mtime +30 -delete\n\n# crontab -e para editar' },
+  ],
+
+  project: [
+    { tag: 'Proyecto', title: 'Simple Report', desc: 'Reporteador web empresarial con export a Excel agrupado, filtros avanzados y dashboard en tiempo real', techs: 'Node.js, Express, SQL Server, ExcelJS' },
+    { tag: 'Proyecto', title: 'Paramo Cafe', desc: 'App de fidelizacion con puntos, tiers, pedidos online y sincronizacion con POS', techs: 'Flutter, Firebase, Riverpod, Cloud Functions' },
+    { tag: 'Proyecto', title: 'E-Commerce Dashboard', desc: 'Panel de control para tienda online con metricas de ventas y comportamiento de clientes', techs: 'React, Chart.js, Node.js, PostgreSQL' },
+    { tag: 'Proyecto', title: 'Sistema de Inventario', desc: 'Control de stock multi-sucursal con trazabilidad de movimientos y alertas automaticas', techs: 'Node.js, SQL Server, Bootstrap, DataTables' },
+    { tag: 'Proyecto', title: 'API REST Empresarial', desc: 'Backend escalable con JWT, rate limiting, Swagger docs y tests automatizados', techs: 'Express, JWT, Swagger, Jest, Docker' },
+    { tag: 'Proyecto', title: 'Landing Page Builder', desc: 'Generador de paginas web con drag & drop, templates responsivos y deploy automatico', techs: 'HTML5, CSS3, JavaScript, Firebase' },
+    { tag: 'Proyecto', title: 'Chat en Tiempo Real', desc: 'Mensajeria con websockets, salas privadas, archivos y notificaciones push', techs: 'Socket.io, Node.js, MongoDB, Firebase' },
+    { tag: 'Proyecto', title: 'App de Delivery', desc: 'Pedidos a domicilio con tracking en vivo, pasarela de pagos y panel admin', techs: 'Flutter, Firebase, Google Maps, Stripe' },
+    { tag: 'Infraestructura', title: 'Migracion Cloud Empresarial', desc: 'Migracion de servidores on-premise a la nube con cero downtime y reduccion de costos del 40%', techs: 'AWS, Docker, Nginx, CI/CD, Terraform' },
+    { tag: 'Infraestructura', title: 'Data Warehouse Comercial', desc: 'Consolidacion de datos de ventas, inventario y clientes en un warehouse centralizado para BI', techs: 'SQL Server, ETL, Power BI, Python, SSIS' },
+    { tag: 'Proyecto', title: 'Monitoreo IoT Industrial', desc: 'Sistema de sensores conectados para monitorear temperatura, humedad y produccion en tiempo real', techs: 'MQTT, Node.js, InfluxDB, Grafana' },
+    { tag: 'Infraestructura', title: 'VPS Autogestionado', desc: 'Servidor privado configurado con SSL, firewall, backups automaticos y deploy continuo', techs: 'Linux, Nginx, PM2, UFW, Let\'s Encrypt' },
+  ],
+
+  service: [
+    { icon: '\u{1F310}', title: 'Desarrollo Web', desc: 'Sitios web modernos, rapidos y responsivos. Desde landing pages hasta apps web completas', cta: 'Contactame' },
+    { icon: '\u{1F4F1}', title: 'Apps Moviles', desc: 'Aplicaciones nativas iOS y Android con Flutter. Rendimiento nativo, un solo codigo', cta: 'Hablemos' },
+    { icon: '\u{1F4CA}', title: 'Reportes & Dashboards', desc: 'Convierte datos en decisiones. Dashboards interactivos y reportes automatizados', cta: 'Ver mas' },
+    { icon: '\u{26A1}', title: 'APIs y Backend', desc: 'Servicios robustos y escalables. REST APIs, integraciones y bases de datos optimizadas', cta: 'Cotiza aqui' },
+    { icon: '\u{1F680}', title: 'Transformacion Digital', desc: 'Automatiza procesos, integra sistemas y lleva tu empresa al siguiente nivel', cta: 'Empecemos' },
+    { icon: '\u{1F6E0}', title: 'Soporte IT', desc: 'Mantenimiento, optimizacion y soporte tecnico para tus sistemas. Disponibilidad garantizada', cta: 'Contactame' },
+    { icon: '\u{2601}', title: 'Cloud & Deploy', desc: 'Migracion a la nube, CI/CD, hosting optimizado. Tu app disponible 24/7 a cualquier escala', cta: 'Consulta gratis' },
+    { icon: '\u{1F4B0}', title: 'E-Commerce', desc: 'Tiendas online completas con carrito, pagos, inventario y panel admin. Vende desde el dia uno', cta: 'Quiero mi tienda' },
+    { icon: '\u{1F5A5}', title: 'Servidores & Hosting', desc: 'Configuracion de VPS, dominios, SSL y deploy automatizado. Tu proyecto en linea sin complicaciones', cta: 'Montar mi servidor' },
+    { icon: '\u{1F4E6}', title: 'Data Warehouse & BI', desc: 'Centraliza tus datos de ventas, inventario y operaciones. Dashboards inteligentes para decidir mejor', cta: 'Quiero datos claros' },
+    { icon: '\u{1F3E0}', title: 'Tecnologia para el Hogar', desc: 'Automatizacion, IoT y redes inteligentes. Conecta tu casa con tecnologia a tu medida', cta: 'Moderniza tu hogar' },
+    { icon: '\u{2601}', title: 'Migracion a la Nube', desc: 'Lleva tu infraestructura local al cloud. Reduccion de costos, escalabilidad y alta disponibilidad', cta: 'Migrar ahora' },
+    { icon: '\u{1F512}', title: 'Ciberseguridad', desc: 'Auditorias, firewalls, backups y protocolos de seguridad para proteger tu negocio digital', cta: 'Proteger mi empresa' },
+  ],
+
+  quote: [
+    { text: 'Excelente trabajo, el sistema quedo justo como lo necesitabamos. Superaron nuestras expectativas', author: 'Carlos Mendez', role: 'Gerente General, TechStore' },
+    { text: 'En dos semanas teniamos el dashboard funcionando. Ahora tomamos decisiones con datos reales', author: 'Maria Rodriguez', role: 'Directora Comercial, FreshMarket' },
+    { text: 'La app movil incremento nuestras ventas un 40%. La inversion se pago sola en el primer mes', author: 'Ahmed Al-Rashid', role: 'CEO, Paramo Cafe' },
+    { text: 'Profesionalismo total. Entregaron a tiempo, con documentacion y soporte post-lanzamiento', author: 'Laura Sanchez', role: 'CTO, DataFlow Solutions' },
+    { text: 'Llevabamos meses buscando quien integrara nuestro POS con la tienda online. Lo resolvieron en una semana', author: 'Pedro Villamizar', role: 'Bodega Central' },
+    { text: 'El reporte automatizado nos ahorra 20 horas semanales. Ya no podemos trabajar sin el', author: 'Ana Torres', role: 'Contadora, Grupo Empresarial VZ' },
+    { text: 'Nos explicaron cada paso, nos capacitaron y siempre estuvieron disponibles. 100% recomendado', author: 'Roberto Diaz', role: 'Dir. Operaciones, LogiTrack' },
+    { text: 'Pasamos de Excel a un sistema real. Nuestro inventario cuadra y tenemos trazabilidad completa', author: 'Sofia Herrera', role: 'Gerente Almacen, DistribuMax' },
+    { text: 'Migramos todo al cloud y los costos de infraestructura bajaron un 40%. Debimos hacerlo antes', author: 'Jorge Castillo', role: 'CTO, Grupo Industrial Norte' },
+    { text: 'El warehouse de datos nos dio visibilidad total. Ahora sabemos exactamente que vender y donde', author: 'Patricia Vega', role: 'Dir. Comercial, RetailPlus' },
+    { text: 'Nos montaron el servidor, el SSL, los backups y el deploy automatico. Cero preocupaciones desde entonces', author: 'Miguel Fuentes', role: 'Fundador, StartupVZ' },
+    { text: 'Conectaron los sensores de la planta al dashboard. Detectamos fallas antes de que ocurran', author: 'Ricardo Marin', role: 'Jefe de Planta, IndustriaTech' },
+  ],
+
+  cover: [
+    { badge: '// Nuevo Post', title: 'codeateJD', subtitle: 'Desarrollo web, apps moviles & soluciones IT' },
+    { badge: '// Serie', title: 'Tips de JavaScript', subtitle: 'Trucos y buenas practicas para escribir mejor codigo' },
+    { badge: '// Portafolio', title: 'Mis Proyectos', subtitle: 'Soluciones reales para empresas reales' },
+    { badge: '// Tutorial', title: 'De Cero a Deploy', subtitle: 'Aprende a publicar tu primera web en minutos' },
+    { badge: '// Cloud', title: 'Servidores & Nube', subtitle: 'Infraestructura moderna para tu negocio digital' },
+    { badge: '// Freelance', title: 'Trabaja Remoto', subtitle: 'Como construir una carrera en desarrollo freelance' },
+    { badge: '// Flutter', title: 'Apps Moviles', subtitle: 'Desarrollo multiplataforma con un solo codigo' },
+    { badge: '// DevOps', title: 'CI/CD Pipeline', subtitle: 'Automatiza tu flujo de desarrollo y deploy' },
+    { badge: '// Episodio 01', title: 'Code & Cafe', subtitle: 'Conversaciones sobre tecnologia, negocio y codigo' },
+    { badge: '// Workshop', title: 'Firebase Hosting', subtitle: 'Publica tu web gratis con SSL y CDN global' },
+  ],
+
+  logos: [
+    { tag: 'Aliados Comerciales', title: 'Nuestros Aliados', subtitle: 'Empresas que confian en nosotros' },
+    { tag: 'Tech Stack', title: 'Tecnologias', subtitle: 'Herramientas que usamos dia a dia' },
+    { tag: 'Partners', title: 'Partners Estrategicos', subtitle: 'Juntos construimos mejores soluciones' },
+    { tag: 'Clientes', title: 'Casos de Exito', subtitle: 'Empresas que transformamos con tecnologia' },
+    { tag: 'Certificaciones', title: 'Certificados', subtitle: 'Formacion continua y especializada' },
+    { tag: 'Herramientas', title: 'Mi Setup', subtitle: 'El stack detras de cada proyecto' },
+  ],
+};
+
+/* ══════════════════════════════════════════════
+   COLOR PALETTES (presets + random generator)
+   ══════════════════════════════════════════════ */
+
+const PALETTES = [
+  { name: 'Neon',    bg: 'linear-gradient(135deg, #1a1a3e, #3b1f7a, #5b2d9e)', accent: '#4ade80', line: 'linear-gradient(90deg, #667eea, #764ba2, #f093fb)', cta: 'linear-gradient(135deg, #667eea, #764ba2)' },
+  { name: 'Ocean',   bg: 'linear-gradient(135deg, #0c2340, #1a4a7a, #0e6ba8)', accent: '#38bdf8', line: 'linear-gradient(90deg, #0ea5e9, #38bdf8, #7dd3fc)', cta: 'linear-gradient(135deg, #0ea5e9, #0284c7)' },
+  { name: 'Sunset',  bg: 'linear-gradient(135deg, #2d1520, #6b2040, #a03050)', accent: '#fbbf24', line: 'linear-gradient(90deg, #f97316, #ef4444, #ec4899)', cta: 'linear-gradient(135deg, #f97316, #ef4444)' },
+  { name: 'Emerald', bg: 'linear-gradient(135deg, #0a2e1a, #145a35, #1a7a4a)', accent: '#34d399', line: 'linear-gradient(90deg, #10b981, #34d399, #6ee7b7)', cta: 'linear-gradient(135deg, #10b981, #059669)' },
+  { name: 'Ruby',    bg: 'linear-gradient(135deg, #2d0a10, #6b1525, #9a1e35)', accent: '#fb7185', line: 'linear-gradient(90deg, #e11d48, #f43f5e, #fb7185)', cta: 'linear-gradient(135deg, #e11d48, #be123c)' },
+  { name: 'Gold',    bg: 'linear-gradient(135deg, #2d2408, #5a4510, #7a6020)', accent: '#fbbf24', line: 'linear-gradient(90deg, #f59e0b, #fbbf24, #fcd34d)', cta: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+  { name: 'Cyber',   bg: 'linear-gradient(135deg, #14142b, #2a1a5e, #3d2080)', accent: '#a78bfa', line: 'linear-gradient(90deg, #8b5cf6, #a78bfa, #c4b5fd)', cta: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' },
+  { name: 'Dark',    bg: 'linear-gradient(135deg, #1a1a1a, #2a2a2a, #333333)', accent: '#e2e8f0', line: 'linear-gradient(90deg, #525252, #737373, #a3a3a3)', cta: 'linear-gradient(135deg, #525252, #404040)' },
+  { name: 'Aurora',  bg: 'linear-gradient(135deg, #0f1b3d, #1a3570, #205090)', accent: '#67e8f9', line: 'linear-gradient(90deg, #06b6d4, #22d3ee, #a5f3fc)', cta: 'linear-gradient(135deg, #06b6d4, #0891b2)' },
+  { name: 'Magma',   bg: 'linear-gradient(135deg, #2d1200, #5a2500, #803800)', accent: '#fdba74', line: 'linear-gradient(90deg, #ea580c, #f97316, #fdba74)', cta: 'linear-gradient(135deg, #ea580c, #c2410c)' },
+  { name: 'Royal',   bg: 'linear-gradient(135deg, #162038, #253a6a, #354f90)', accent: '#93c5fd', line: 'linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd)', cta: 'linear-gradient(135deg, #3b82f6, #2563eb)' },
+  { name: 'Toxic',   bg: 'linear-gradient(135deg, #102e08, #1a5a10, #258020)', accent: '#a3e635', line: 'linear-gradient(90deg, #65a30d, #84cc16, #a3e635)', cta: 'linear-gradient(135deg, #65a30d, #4d7c0f)' },
+];
+
+function generateRandomPaletteData() {
+  const hue = Math.floor(Math.random() * 360);
+  const h2 = (hue + 25 + Math.random() * 30) % 360;
+  const h3 = (hue + 50 + Math.random() * 40) % 360;
+  const accH = (hue + 150 + Math.random() * 60) % 360;
+  return {
+    name: 'Random',
+    bg: `linear-gradient(${120 + Math.random()*80}deg, hsl(${hue},35%,4%), hsl(${h2},40%,10%), hsl(${h3},45%,16%))`,
+    accent: `hsl(${accH}, 75%, 65%)`,
+    line: `linear-gradient(90deg, hsl(${hue},65%,50%), hsl(${h2},65%,55%), hsl(${h3},65%,60%))`,
+    cta: `linear-gradient(135deg, hsl(${hue},60%,45%), hsl(${h2},60%,40%))`,
+  };
+}
+
+/* ══════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════ */
+
+let currentTpl = 'tip';
+let currentSize = 'post';
+let currentPalette = 0;
+let customPalette = null; // for random-generated
+const usedIndices = { tip: [], project: [], service: [], quote: [], cover: [], logos: [] };
+let uploadedLogos = []; // base64 data URLs
+let coverLogoData = null; // base64 for cover logo
+
+/* ══════════════════════════════════════════════
+   PALETTE PICKER
+   ══════════════════════════════════════════════ */
+
+function buildPalettePicker() {
+  const c = document.getElementById('palettePicker');
+  c.innerHTML = PALETTES.map((p, i) =>
+    `<div style="text-align:center">
+       <button class="pal-btn${i===0?' active':''}" data-pal="${i}" onclick="setPalette(${i})" style="background:${p.bg};width:100%"></button>
+       <div class="pal-label">${p.name}</div>
+     </div>`
+  ).join('');
+}
+
+function setPalette(idx) {
+  currentPalette = idx;
+  customPalette = null;
+  document.querySelectorAll('.pal-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  applyPalette();
+}
+
+function randomPalette() {
+  customPalette = generateRandomPaletteData();
+  document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+  applyPalette();
+}
+
+function getActivePalette() {
+  return customPalette || PALETTES[currentPalette];
+}
+
+function applyPalette() {
+  const p = getActivePalette();
+  const canvas = document.getElementById('postCanvas');
+
+  if (currentSize === 'fb') {
+    // Facebook: fondo solido oscuro, sin gradiente
+    canvas.style.background = extractSolidBg(p.bg);
+    canvas.style.backgroundSize = '';
+  } else {
+    canvas.style.background = p.bg;
+    canvas.style.backgroundSize = '200% 200%';
+  }
+
+  canvas.style.setProperty('--accent', p.accent);
+  document.getElementById('decoLine').style.background = p.line;
+  const cta = document.getElementById('render-svc-cta');
+  if (cta) cta.style.background = p.cta;
+}
+
+function extractSolidBg(bg) {
+  // Extrae el color medio del gradiente para usar como fondo solido
+  const colors = bg.match(/#[0-9a-fA-F]{6}|rgb\([^)]+\)|hsl\([^)]+\)/g);
+  if (colors && colors.length >= 2) return colors[1]; // color del medio
+  if (colors && colors.length >= 1) return colors[0];
+  return '#0f172a';
+}
+
+/* ── Custom color pickers ── */
+['customC1','customC2','customC3','customC4'].forEach((id, i) => {
+  document.getElementById(id).addEventListener('input', function() {
+    document.getElementById(id + 'Hex').value = this.value;
+  });
+});
+
+function syncColorFromHex(n) {
+  const hex = document.getElementById('customC' + n + 'Hex').value;
+  if (/^#[0-9a-fA-F]{6}$/.test(hex)) {
+    document.getElementById('customC' + n).value = hex;
+  }
+}
+
+function applyCustomColors() {
+  const c1 = document.getElementById('customC1').value;
+  const c2 = document.getElementById('customC2').value;
+  const c3 = document.getElementById('customC3').value;
+  const c4 = document.getElementById('customC4').value;
+
+  customPalette = {
+    name: 'Custom',
+    bg: `linear-gradient(160deg, ${darken(c1, 0.85)}, ${darken(c2, 0.75)}, ${darken(c1, 0.65)})`,
+    accent: c3,
+    line: `linear-gradient(90deg, ${c1}, ${c2}, ${c4})`,
+    cta: `linear-gradient(135deg, ${c1}, ${c2})`,
+  };
+  document.querySelectorAll('.pal-btn').forEach(b => b.classList.remove('active'));
+  applyPalette();
+}
+
+function darken(hex, amount) {
+  const r = Math.round(parseInt(hex.slice(1,3), 16) * (1 - amount));
+  const g = Math.round(parseInt(hex.slice(3,5), 16) * (1 - amount));
+  const b = Math.round(parseInt(hex.slice(5,7), 16) * (1 - amount));
+  return `rgb(${r},${g},${b})`;
+}
+
+/* ══════════════════════════════════════════════
+   TEMPLATE & SIZE
+   ══════════════════════════════════════════════ */
+
+function setTemplate(tpl) {
+  currentTpl = tpl;
+  document.querySelectorAll('.tpl-btn').forEach(b => b.classList.toggle('active', b.dataset.tpl === tpl));
+  document.querySelectorAll('[id^="fields-"]').forEach(el => el.style.display = 'none');
+  document.getElementById('fields-' + tpl).style.display = '';
+  document.querySelectorAll('[id^="content-"]').forEach(el => el.style.display = 'none');
+  document.getElementById('content-' + tpl).style.display = '';
+
+  const canvas = document.getElementById('postCanvas');
+  canvas.className = 'post tpl-' + tpl + ' size-' + currentSize;
+  applyPalette();
+  updateCounter();
+  updatePreview();
+}
+
+function setSize(size) {
+  currentSize = size;
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.sz === size));
+  const canvas = document.getElementById('postCanvas');
+  canvas.className = 'post tpl-' + currentTpl + ' size-' + size;
+  applyPalette();
+}
+
+/* ══════════════════════════════════════════════
+   RANDOM CONTENT
+   ══════════════════════════════════════════════ */
+
+function getRandomIndex(tpl) {
+  const lib = LIBRARY[tpl];
+  if (usedIndices[tpl].length >= lib.length) usedIndices[tpl] = [];
+  let idx;
+  do { idx = Math.floor(Math.random() * lib.length); } while (usedIndices[tpl].includes(idx));
+  usedIndices[tpl].push(idx);
+  return idx;
+}
+
+function randomContent() {
+  const idx = getRandomIndex(currentTpl);
+  const item = LIBRARY[currentTpl][idx];
+
+  if (currentTpl === 'tip') {
+    document.getElementById('tip-tag').value = item.tag;
+    document.getElementById('tip-title').value = item.title;
+    document.getElementById('tip-code').value = item.code;
+  } else if (currentTpl === 'project') {
+    document.getElementById('proj-tag').value = item.tag;
+    document.getElementById('proj-title').value = item.title;
+    document.getElementById('proj-desc').value = item.desc;
+    document.getElementById('proj-techs').value = item.techs;
+  } else if (currentTpl === 'service') {
+    document.getElementById('svc-icon').value = item.icon;
+    document.getElementById('svc-title').value = item.title;
+    document.getElementById('svc-desc').value = item.desc;
+    document.getElementById('svc-cta').value = item.cta;
+  } else if (currentTpl === 'quote') {
+    document.getElementById('quote-text').value = item.text;
+    document.getElementById('quote-author').value = item.author;
+    document.getElementById('quote-role').value = item.role;
+  } else if (currentTpl === 'cover') {
+    document.getElementById('cover-badge').value = item.badge;
+    document.getElementById('cover-title').value = item.title;
+    document.getElementById('cover-subtitle').value = item.subtitle;
+    document.getElementById('cover-gradient').value = Math.floor(Math.random() * TITLE_GRADIENTS.length);
+  } else if (currentTpl === 'logos') {
+    document.getElementById('logos-tag').value = item.tag;
+    document.getElementById('logos-title').value = item.title;
+    document.getElementById('logos-subtitle').value = item.subtitle;
+  }
+
+  // Random palette + avatar + particles
+  const rp = Math.floor(Math.random() * (PALETTES.length + 1));
+  if (rp >= PALETTES.length) {
+    randomPalette();
+  } else {
+    setPalette(rp);
+  }
+  randomAvatarIndex();
+
+  // Re-trigger entrance animation
+  const content = document.getElementById('content-' + currentTpl);
+  content.style.animation = 'none';
+  content.offsetHeight; // reflow
+  content.style.animation = '';
+
+  updateCounter();
+  updatePreview();
+}
+
+function updateCounter() {
+  const used = usedIndices[currentTpl].length;
+  const total = LIBRARY[currentTpl].length;
+  document.getElementById('counterBadge').textContent = `${used}/${total}`;
+}
+
+/* ══════════════════════════════════════════════
+   PREVIEW
+   ══════════════════════════════════════════════ */
+
+function highlightCode(raw) {
+  raw = raw.replace(/\b(const|let|var|await|async|function|return|if|else|import|from|export|class|new|this|try|catch|throw|for|while|of|in|switch|case|break|default|yield|final|void|Widget|String|int|double|bool|List|Map)\b/g, '\u2039kw\u203a$1\u2039/kw\u203a');
+  raw = raw.replace(/\b([a-zA-Z_]\w*)\s*\(/g, '\u2039fn\u203a$1\u2039/fn\u203a(');
+  raw = raw.replace(/(\/\/.*)/g, '\u2039cm\u203a$1\u2039/cm\u203a');
+  raw = raw.replace(/(\/\*[\s\S]*?\*\/)/g, '\u2039cm\u203a$1\u2039/cm\u203a');
+  raw = raw.replace(/(#[^\s{;]+)/g, '\u2039cm\u203a$1\u2039/cm\u203a');
+  raw = raw.replace(/('.*?'|".*?"|`[^`]*`)/g, '\u2039str\u203a$1\u2039/str\u203a');
+  return raw.replace(/\u2039(\/?)(kw|fn|cm|str)\u203a/g, (_, sl, c) => sl ? '</span>' : '<span class="' + c + '">');
+}
+
+const TITLE_STYLES = [
+  { name: 'Rainbow', colors: ['#f093fb','#e85d9a','#f5576c','#ff8c42','#ffd200','#7bdc5f','#4facfe','#a78bfa'] },
+  { name: 'Fuego', colors: ['#ff2222','#ff5533','#ff7744','#ff9922','#ffbb00','#ffdd00'] },
+  { name: 'Oceano', colors: ['#00e5ff','#00b8d4','#2979ff','#536dfe','#7c4dff','#aa00ff'] },
+  { name: 'Amanecer', colors: ['#ff6fd8','#ff8a65','#ffab40','#ffd740','#ffee58'] },
+  { name: 'Matrix', colors: ['#00e676','#69f0ae','#00c853','#76ff03','#b2ff59'] },
+  { name: 'Electrico', colors: ['#448aff','#40c4ff','#18ffff','#84ffff','#e0f7fa'] },
+  { name: 'Lava', colors: ['#ff1744','#f50057','#d500f9','#e040fb','#ff80ab'] },
+  { name: 'Oro', colors: ['#ff8f00','#ffab00','#ffd600','#ffea00','#f9a825'] },
+  { name: 'Blanco', colors: null },
+];
+
+function interpolateColors(colors, steps) {
+  if (!colors || steps <= 0) return [];
+  if (steps === 1) return [colors[0]];
+  const result = [];
+  for (let i = 0; i < steps; i++) {
+    const t = i / (steps - 1);
+    const segment = t * (colors.length - 1);
+    const idx = Math.floor(segment);
+    const frac = segment - idx;
+    const c1 = colors[Math.min(idx, colors.length - 1)];
+    const c2 = colors[Math.min(idx + 1, colors.length - 1)];
+    result.push(lerpColor(c1, c2, frac));
+  }
+  return result;
+}
+
+function lerpColor(a, b, t) {
+  const r1 = parseInt(a.slice(1,3),16), g1 = parseInt(a.slice(3,5),16), b1 = parseInt(a.slice(5,7),16);
+  const r2 = parseInt(b.slice(1,3),16), g2 = parseInt(b.slice(3,5),16), b2 = parseInt(b.slice(5,7),16);
+  const r = Math.round(r1 + (r2-r1)*t), g = Math.round(g1 + (g2-g1)*t), bl = Math.round(b1 + (b2-b1)*t);
+  return `rgb(${r},${g},${bl})`;
+}
+
+function colorizeTitle(text, styleIdx) {
+  const style = TITLE_STYLES[styleIdx];
+  if (!style || !style.colors) return text.split('').map(c => `<span style="color:#fff">${c === ' ' ? '&nbsp;' : c}</span>`).join('');
+  const chars = text.split('').filter(c => c !== ' ');
+  const colArr = interpolateColors(style.colors, chars.length);
+  let ci = 0;
+  return text.split('').map(c => {
+    if (c === ' ') return '&nbsp;';
+    return `<span style="color:${colArr[ci++]}">${c}</span>`;
+  }).join('');
+}
+
+function updatePreview() {
+  const showAvatar = document.getElementById('avatarToggle').checked;
+  const avatarSvg = getAvatarSvg();
+
+  if (currentTpl === 'tip') {
+    const tipTag = document.getElementById('tip-tag').value.trim();
+    const tipTagEl = document.getElementById('render-tip-tag');
+    tipTagEl.textContent = tipTag;
+    tipTagEl.style.display = tipTag ? '' : 'none';
+
+    document.getElementById('render-tip-title').textContent = document.getElementById('tip-title').value;
+
+    const tipCode = document.getElementById('tip-code').value.trim();
+    const codeEl = document.getElementById('render-tip-code');
+    codeEl.innerHTML = tipCode ? highlightCode(tipCode) : '';
+    codeEl.style.display = tipCode ? '' : 'none';
+
+    const tipAv = document.getElementById('tipAvatar');
+    tipAv.style.display = showAvatar ? 'flex' : 'none';
+    if (showAvatar) document.getElementById('tipAvatarSvg').innerHTML = avatarSvg;
+
+  } else if (currentTpl === 'project') {
+    const projTag = document.getElementById('proj-tag').value.trim();
+    const projTagEl = document.getElementById('render-proj-tag');
+    projTagEl.textContent = projTag;
+    projTagEl.style.display = projTag ? '' : 'none';
+
+    document.getElementById('render-proj-title').textContent = document.getElementById('proj-title').value;
+
+    const projDesc = document.getElementById('proj-desc').value.trim();
+    const descEl = document.getElementById('render-proj-desc');
+    descEl.textContent = projDesc;
+    descEl.style.display = projDesc ? '' : 'none';
+
+    const techs = document.getElementById('proj-techs').value.split(',').map(t => t.trim()).filter(Boolean);
+    const techsEl = document.getElementById('render-proj-techs');
+    techsEl.innerHTML = techs.map(t => `<span class="tech-tag">${t}</span>`).join('');
+    techsEl.style.display = techs.length ? '' : 'none';
+
+    document.getElementById('tipAvatar').style.display = showAvatar ? 'flex' : 'none';
+    if (showAvatar) document.getElementById('tipAvatarSvg').innerHTML = avatarSvg;
+
+  } else if (currentTpl === 'service') {
+    const svcIcon = document.getElementById('svc-icon').value.trim();
+    const iconEl = document.getElementById('render-svc-icon');
+    iconEl.textContent = svcIcon;
+    iconEl.style.display = svcIcon ? '' : 'none';
+
+    document.getElementById('render-svc-title').textContent = document.getElementById('svc-title').value;
+
+    const svcDesc = document.getElementById('svc-desc').value.trim();
+    const svcDescEl = document.getElementById('render-svc-desc');
+    svcDescEl.textContent = svcDesc;
+    svcDescEl.style.display = svcDesc ? '' : 'none';
+
+    const svcCta = document.getElementById('svc-cta').value.trim();
+    const ctaEl = document.getElementById('render-svc-cta');
+    ctaEl.textContent = svcCta;
+    ctaEl.style.display = svcCta ? '' : 'none';
+    applyPalette();
+
+    document.getElementById('tipAvatar').style.display = showAvatar ? 'flex' : 'none';
+    if (showAvatar) document.getElementById('tipAvatarSvg').innerHTML = avatarSvg;
+
+  } else if (currentTpl === 'quote') {
+    document.getElementById('render-quote-text').textContent = document.getElementById('quote-text').value;
+    document.getElementById('render-quote-author').textContent = document.getElementById('quote-author').value;
+    document.getElementById('render-quote-role').textContent = document.getElementById('quote-role').value;
+
+    document.getElementById('tipAvatar').style.display = 'none';
+
+    const qAvatar = document.getElementById('quoteAvatarSvg');
+    const canvas = document.getElementById('postCanvas');
+    if (showAvatar) {
+      qAvatar.style.display = '';
+      qAvatar.innerHTML = avatarSvg;
+      canvas.classList.remove('no-avatar');
+    } else {
+      qAvatar.style.display = 'none';
+      canvas.classList.add('no-avatar');
+    }
+
+  } else if (currentTpl === 'cover') {
+    const coverBadge = document.getElementById('cover-badge').value.trim();
+    const coverTitle = document.getElementById('cover-title').value.trim();
+    const coverSub = document.getElementById('cover-subtitle').value.trim();
+
+    const badgeEl = document.getElementById('render-cover-badge');
+    badgeEl.textContent = coverBadge;
+    badgeEl.style.display = coverBadge ? '' : 'none';
+
+    const gradIdx = parseInt(document.getElementById('cover-gradient').value);
+    document.getElementById('render-cover-title').innerHTML = colorizeTitle(coverTitle, gradIdx);
+
+    const subEl = document.getElementById('render-cover-subtitle');
+    subEl.textContent = coverSub;
+    subEl.style.display = coverSub ? '' : 'none';
+
+    document.getElementById('render-cover-divider').style.display = coverSub ? '' : 'none';
+
+    const logoEl = document.getElementById('render-cover-logo');
+    if (coverLogoData) {
+      logoEl.style.display = '';
+      logoEl.innerHTML = `<img src="${coverLogoData}">`;
+    } else {
+      logoEl.style.display = 'none';
+    }
+
+    document.getElementById('tipAvatar').style.display = showAvatar ? 'flex' : 'none';
+    if (showAvatar) document.getElementById('tipAvatarSvg').innerHTML = avatarSvg;
+
+  } else if (currentTpl === 'logos') {
+    document.getElementById('render-logos-tag').textContent = document.getElementById('logos-tag').value;
+    document.getElementById('render-logos-title').textContent = document.getElementById('logos-title').value;
+    document.getElementById('render-logos-subtitle').textContent = document.getElementById('logos-subtitle').value;
+
+    const grid = document.getElementById('render-logos-grid');
+    const useColor = document.getElementById('logosColorToggle').checked;
+    if (uploadedLogos.length > 0) {
+      grid.innerHTML = uploadedLogos.map(src =>
+        `<div class="logo-cell${useColor ? ' has-color' : ''}"><img src="${src}"></div>`
+      ).join('');
+    } else {
+      grid.innerHTML = Array.from({length: 6}, (_, i) =>
+        `<div class="logo-cell"><span class="logo-text">Logo ${i+1}</span></div>`
+      ).join('');
+    }
+
+    document.getElementById('tipAvatar').style.display = showAvatar ? 'flex' : 'none';
+    if (showAvatar) document.getElementById('tipAvatarSvg').innerHTML = avatarSvg;
+  }
+
+  updateCaptionPanel();
+}
+
+/* ══════════════════════════════════════════════
+   LOGO UPLOAD HANDLERS
+   ══════════════════════════════════════════════ */
+
+function handleCoverLogo(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    coverLogoData = e.target.result;
+    document.getElementById('coverLogoStatus').textContent = file.name;
+    const thumb = document.getElementById('coverLogoThumb');
+    thumb.innerHTML = `<div class="logo-thumb" style="margin-top:8px"><img src="${coverLogoData}"><button class="remove-logo" onclick="event.stopPropagation();removeCoverLogo()">x</button></div>`;
+    updatePreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeCoverLogo() {
+  coverLogoData = null;
+  document.getElementById('coverLogoInput').value = '';
+  document.getElementById('coverLogoStatus').textContent = 'Click para subir logo';
+  document.getElementById('coverLogoThumb').innerHTML = '';
+  updatePreview();
+}
+
+function handleLogosUpload(input) {
+  const files = Array.from(input.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      uploadedLogos.push(e.target.result);
+      renderLogoThumbs();
+      updatePreview();
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function removeLogo(idx) {
+  uploadedLogos.splice(idx, 1);
+  renderLogoThumbs();
+  updatePreview();
+}
+
+function renderLogoThumbs() {
+  const container = document.getElementById('logosThumbs');
+  container.innerHTML = uploadedLogos.map((src, i) =>
+    `<div class="logo-thumb"><img src="${src}"><button class="remove-logo" onclick="removeLogo(${i})">x</button></div>`
+  ).join('');
+}
+
+/* ══════════════════════════════════════════════
+   CAPTION, HASHTAGS & ALT TEXT GENERATOR
+   ══════════════════════════════════════════════ */
+
+const HASHTAG_POOLS = {
+  tip: {
+    base: ['#programacion','#codigo','#developer','#devtips','#webdev','#coding','#codeateJD','#aprendeaprogramar','#softwaredev','#tech'],
+    js: ['#javascript','#js','#nodejs','#reactjs','#frontend'],
+    css: ['#css','#webdesign','#uidesign','#cssgrid','#frontend'],
+    flutter: ['#flutter','#dart','#mobiledev','#appdevelopment','#crossplatform'],
+    sql: ['#sql','#database','#backend','#data','#sqlserver'],
+    git: ['#git','#github','#versioncontrol','#devtools','#opensource'],
+    ts: ['#typescript','#javascript','#typed','#frontend','#fullstack'],
+    react: ['#react','#reactjs','#hooks','#frontend','#webapp'],
+    cloud: ['#cloud','#devops','#docker','#aws','#hosting','#servidor'],
+    node: ['#nodejs','#express','#backend','#api','#restapi'],
+    server: ['#linux','#servidor','#sysadmin','#infra','#hosting'],
+    data: ['#data','#datawarehouse','#analytics','#bi','#etl'],
+    iot: ['#iot','#mqtt','#sensores','#industria40','#automation'],
+  },
+  project: ['#programacion','#proyecto','#developer','#portfolio','#codeateJD','#webdev','#appdevelopment','#tech','#software','#freelance','#devlife'],
+  service: ['#servicios','#desarrolloweb','#freelance','#codeateJD','#negociodigital','#transformaciondigital','#tecnologia','#pymes','#emprendimiento','#solucionesIT'],
+  quote: ['#testimonio','#clientefeliz','#codeateJD','#resultados','#freelance','#desarrolloweb','#software','#confianza','#calidad','#casodeexito'],
+  cover: ['#codeateJD','#developer','#programacion','#tech','#codigo','#software','#freelance','#devlife','#webdev','#contenidotech'],
+  logos: ['#aliados','#partners','#codeateJD','#networking','#colaboracion','#empresas','#tecnologia','#negocio','#confianza','#equipo'],
+};
+
+const CAPTION_INTROS = {
+  tip: [
+    '💡 Tip del día:',
+    '🧠 ¿Sabías esto?',
+    '⚡ Mejora tu código:',
+    '🔥 Code tip:',
+    '💻 Aprende algo nuevo:',
+    '✨ Escribe mejor código:',
+    '🚀 Level up:',
+    '📌 Guarda este tip:',
+  ],
+  project: [
+    '🚀 Nuevo proyecto:',
+    '💼 Del portafolio:',
+    '🏗️ Construimos esto:',
+    '✅ Proyecto completado:',
+    '⚡ Case study:',
+  ],
+  service: [
+    '🛠️ ¿Necesitas esto?',
+    '💡 Servicio disponible:',
+    '🎯 Solución para tu negocio:',
+    '⚡ Podemos ayudarte:',
+    '🔧 Lo que hacemos:',
+  ],
+  quote: [
+    '💬 Lo que dicen nuestros clientes:',
+    '⭐ Testimonio real:',
+    '🤝 Resultados que hablan:',
+    '💯 Feedback de cliente:',
+    '🏆 Caso de éxito:',
+  ],
+  cover: [
+    '📢 Nuevo contenido:',
+    '🎬 Nueva serie:',
+    '🔥 Esto viene:',
+    '✨ Contenido fresco:',
+    '🚀 Arrancamos:',
+  ],
+  logos: [
+    '🤝 Nuestros aliados:',
+    '⭐ Empresas que confían en nosotros:',
+    '💪 Juntos somos más:',
+    '🏢 Partners estratégicos:',
+    '🌐 Red de aliados:',
+  ],
+};
+
+const CAPTION_CLOSERS = [
+  '\n\n👉 Sígueme para más contenido → @codeatejd',
+  '\n\n💬 ¿Dudas? Escríbeme por DM → @codeatejd',
+  '\n\n🔔 Activa notificaciones para no perderte nada → @codeatejd',
+  '\n\n📩 ¿Quieres algo así? Hablemos → @codeatejd',
+  '\n\n❤️ Dale like y comparte si te sirvió → @codeatejd',
+  '\n\n💾 Guarda este post para después → @codeatejd',
+];
+
+function generateCaption() {
+  const intros = CAPTION_INTROS[currentTpl] || CAPTION_INTROS.tip;
+  const intro = intros[Math.floor(Math.random() * intros.length)];
+  const closer = CAPTION_CLOSERS[Math.floor(Math.random() * CAPTION_CLOSERS.length)];
+  let body = '';
+
+  if (currentTpl === 'tip') {
+    const title = document.getElementById('tip-tag').value + ' — ' + document.getElementById('tip-title').value;
+    body = `\n\n${title}\n\nEste tip te va a ahorrar tiempo y dolores de cabeza. Aplícalo en tu próximo proyecto. 👇`;
+  } else if (currentTpl === 'project') {
+    const name = document.getElementById('proj-title').value;
+    const desc = document.getElementById('proj-desc').value;
+    const techs = document.getElementById('proj-techs').value;
+    body = `\n\n📋 ${name}\n\n${desc}\n\n🛠️ Stack: ${techs}`;
+  } else if (currentTpl === 'service') {
+    const title = document.getElementById('svc-title').value;
+    const desc = document.getElementById('svc-desc').value;
+    body = `\n\n${document.getElementById('svc-icon').value} ${title}\n\n${desc}`;
+  } else if (currentTpl === 'quote') {
+    const text = document.getElementById('quote-text').value;
+    const author = document.getElementById('quote-author').value;
+    const role = document.getElementById('quote-role').value;
+    body = `\n\n"${text}"\n\n— ${author}, ${role}`;
+  } else if (currentTpl === 'cover') {
+    const title = document.getElementById('cover-title').value;
+    const subtitle = document.getElementById('cover-subtitle').value;
+    body = `\n\n${title}\n\n${subtitle}`;
+  } else if (currentTpl === 'logos') {
+    const title = document.getElementById('logos-title').value;
+    const subtitle = document.getElementById('logos-subtitle').value;
+    body = `\n\n${title}\n\n${subtitle}\n\nGracias por confiar en nosotros 🙌`;
+  }
+
+  return intro + body + closer;
+}
+
+function generateHashtags() {
+  let tags = [];
+  if (currentTpl === 'tip') {
+    const tagValue = document.getElementById('tip-tag').value.toLowerCase();
+    tags = [...HASHTAG_POOLS.tip.base];
+    if (tagValue.includes('javascript') || tagValue.includes('js')) tags.push(...HASHTAG_POOLS.tip.js);
+    else if (tagValue.includes('css')) tags.push(...HASHTAG_POOLS.tip.css);
+    else if (tagValue.includes('flutter')) tags.push(...HASHTAG_POOLS.tip.flutter);
+    else if (tagValue.includes('sql') || tagValue.includes('data')) tags.push(...HASHTAG_POOLS.tip.sql, ...HASHTAG_POOLS.tip.data);
+    else if (tagValue.includes('git')) tags.push(...HASHTAG_POOLS.tip.git);
+    else if (tagValue.includes('typescript') || tagValue.includes('ts')) tags.push(...HASHTAG_POOLS.tip.ts);
+    else if (tagValue.includes('react')) tags.push(...HASHTAG_POOLS.tip.react);
+    else if (tagValue.includes('cloud') || tagValue.includes('devops')) tags.push(...HASHTAG_POOLS.tip.cloud);
+    else if (tagValue.includes('node')) tags.push(...HASHTAG_POOLS.tip.node);
+    else if (tagValue.includes('servidor') || tagValue.includes('server')) tags.push(...HASHTAG_POOLS.tip.server);
+    else if (tagValue.includes('iot')) tags.push(...HASHTAG_POOLS.tip.iot);
+    else tags.push(...HASHTAG_POOLS.tip.js); // default
+  } else {
+    tags = [...HASHTAG_POOLS[currentTpl]];
+  }
+  // Deduplicate and limit to 20
+  const unique = [...new Set(tags)];
+  const shuffled = unique.sort(() => Math.random() - 0.5).slice(0, 20);
+  return shuffled.join(' ');
+}
+
+function generateAltText() {
+  if (currentTpl === 'tip') {
+    const tag = document.getElementById('tip-tag').value;
+    const title = document.getElementById('tip-title').value;
+    return `Imagen de post de Instagram con un tip de programación. Etiqueta: "${tag}". Título: "${title}". Incluye un bloque de código con ejemplo práctico. Publicado por codeateJD.`;
+  } else if (currentTpl === 'project') {
+    const name = document.getElementById('proj-title').value;
+    const techs = document.getElementById('proj-techs').value;
+    return `Imagen de portafolio mostrando el proyecto "${name}". Tecnologías utilizadas: ${techs}. Publicado por codeateJD.`;
+  } else if (currentTpl === 'service') {
+    const title = document.getElementById('svc-title').value;
+    return `Imagen promocional del servicio "${title}" ofrecido por codeateJD, freelance de desarrollo web y aplicaciones móviles.`;
+  } else if (currentTpl === 'quote') {
+    const author = document.getElementById('quote-author').value;
+    const role = document.getElementById('quote-role').value;
+    return `Testimonio de ${author}, ${role}. Reseña sobre el trabajo realizado por codeateJD en desarrollo de software.`;
+  } else if (currentTpl === 'cover') {
+    const title = document.getElementById('cover-title').value;
+    const subtitle = document.getElementById('cover-subtitle').value;
+    return `Portada de publicación de codeateJD. Título: "${title}". Subtítulo: "${subtitle}". Diseño con gradiente y branding profesional.`;
+  } else if (currentTpl === 'logos') {
+    const title = document.getElementById('logos-title').value;
+    const count = uploadedLogos.length;
+    return `Imagen de ${title} mostrando ${count > 0 ? count + ' logos de empresas aliadas' : 'una cuadrícula de logos de aliados comerciales'} de codeateJD.`;
+  }
+  return 'Imagen generada por codeateJD, generador de posts para redes sociales.';
+}
+
+function updateCaptionPanel() {
+  document.getElementById('captionOutput').textContent = generateCaption();
+  document.getElementById('hashtagsOutput').textContent = generateHashtags();
+  document.getElementById('altTextOutput').textContent = generateAltText();
+}
+
+function copyText(elementId) {
+  const text = document.getElementById(elementId).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById(elementId).closest('.caption-block').querySelector('.btn-copy');
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyAll() {
+  const caption = document.getElementById('captionOutput').textContent;
+  const hashtags = document.getElementById('hashtagsOutput').textContent;
+  const full = caption + '\n\n.\n.\n.\n\n' + hashtags;
+  navigator.clipboard.writeText(full).then(() => {
+    const btn = document.querySelector('.btn-copy-all');
+    btn.textContent = '✅ Copiado al portapapeles!';
+    setTimeout(() => { btn.textContent = '📋 Copiar Todo (Caption + Hashtags)'; }, 2500);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   DOWNLOAD
+   ══════════════════════════════════════════════ */
+
+async function downloadPost(platform) {
+  const canvas = document.getElementById('postCanvas');
+  const origClass = canvas.className;
+  const origSize = currentSize;
+
+  // If downloading for FB, temporarily switch to FB size
+  if (platform === 'fb' && currentSize !== 'fb') {
+    canvas.className = 'post tpl-' + currentTpl + ' size-fb';
+    applyPalette();
+  }
+
+  const result = await html2canvas(canvas, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: null,
+  });
+
+  const link = document.createElement('a');
+  const sizeName = platform === 'fb' ? 'facebook' : currentSize;
+  link.download = `codeateJD_${currentTpl}_${sizeName}_${Date.now()}.png`;
+  link.href = result.toDataURL('image/png');
+  link.click();
+
+  // Restore original size if changed
+  if (platform === 'fb' && origSize !== 'fb') {
+    canvas.className = origClass;
+    applyPalette();
+  }
+}
+
+/* ══════════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════════ */
+
+buildPalettePicker();
+updateCounter();
+applyPalette();
+updatePreview();
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>codeateJD Creator — Herramientas para contenido</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root { --green: #4ade80; --pink: #f5576c; --dark: #0f0f0f; --dark2: #1a1a1a; }
+  body { font-family: 'Inter', sans-serif; background: var(--dark); color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; }
+
+  .logo { font-size: 32px; font-weight: 900; margin-bottom: 8px; }
+  .logo .gt { color: var(--green); }
+  .logo .cd { color: var(--pink); }
+  .subtitle { color: rgba(255,255,255,0.4); font-size: 15px; margin-bottom: 48px; }
+
+  .tools { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 700px; width: 100%; }
+  .tool-card {
+    background: var(--dark2); border: 2px solid rgba(255,255,255,0.06);
+    border-radius: 20px; padding: 32px; text-decoration: none; color: inherit;
+    transition: all 0.3s; cursor: pointer;
+  }
+  .tool-card:hover { border-color: var(--green); transform: translateY(-4px); }
+  .tool-card .icon { font-size: 40px; margin-bottom: 16px; }
+  .tool-card h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+  .tool-card p { color: rgba(255,255,255,0.4); font-size: 13px; line-height: 1.5; }
+  .tool-card .tag {
+    display: inline-block; margin-top: 12px; padding: 4px 10px;
+    border-radius: 6px; font-size: 11px; font-weight: 700;
+  }
+  .tag-web { background: rgba(74,222,128,0.1); color: var(--green); }
+  .tag-video { background: rgba(245,87,108,0.1); color: var(--pink); }
+
+  .footer { margin-top: 48px; color: rgba(255,255,255,0.2); font-size: 12px; }
+  .footer a { color: rgba(255,255,255,0.3); text-decoration: none; }
+  .footer a:hover { color: var(--green); }
+
+  @media (max-width: 600px) { .tools { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="logo"><span class="gt">&gt;</span><span class="cd">codeate</span><span>JD</span> Creator</div>
+<p class="subtitle">Herramientas para crear contenido profesional</p>
+
+<div class="tools">
+  <a href="generator/" class="tool-card">
+    <div class="icon">&#127912;</div>
+    <h2>Post Generator</h2>
+    <p>Crea posts para Instagram, Facebook y redes sociales con plantillas profesionales, paletas de colores y descarga directa.</p>
+    <span class="tag tag-web">100% Web</span>
+  </a>
+
+  <a href="video-brander/" class="tool-card">
+    <div class="icon">&#127909;</div>
+    <h2>Video Brander</h2>
+    <p>Reemplaza marcas de agua en videos con tu logo. Exporta para Instagram Reels, Feed, Facebook y LinkedIn.</p>
+    <span class="tag tag-video">FFmpeg.wasm</span>
+  </a>
+</div>
+
+<div class="footer">
+  <a href="https://codeatejd.com">codeatejd.com</a>
+</div>
+
+</body>
+</html>
