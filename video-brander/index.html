@@ -390,7 +390,7 @@ function loadFFmpegScripts() {
     s1.src = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js';
     s1.onload = () => {
       const s2 = document.createElement('script');
-      s2.src = 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js';
+      s2.src = 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js';
       s2.onload = () => resolve();
       s2.onerror = () => reject(new Error('No se pudo cargar FFmpeg util desde CDN'));
       document.head.appendChild(s2);
