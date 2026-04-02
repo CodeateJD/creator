@@ -386,17 +386,21 @@ let FFmpegReady = null;
 function loadFFmpegScripts() {
   if (FFmpegReady) return FFmpegReady;
   FFmpegReady = new Promise((resolve, reject) => {
-    const s1 = document.createElement('script');
-    s1.src = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js';
-    s1.onload = () => {
-      const s2 = document.createElement('script');
-      s2.src = 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js';
-      s2.onload = () => resolve();
-      s2.onerror = () => reject(new Error('No se pudo cargar FFmpeg util desde CDN'));
-      document.head.appendChild(s2);
-    };
-    s1.onerror = () => reject(new Error('No se pudo cargar FFmpeg desde CDN'));
-    document.head.appendChild(s1);
+    // Cargar ambos scripts en secuencia
+    const scripts = [
+      'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js',
+      'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js'
+    ];
+    let idx = 0;
+    function loadNext() {
+      if (idx >= scripts.length) { resolve(); return; }
+      const s = document.createElement('script');
+      s.src = scripts[idx];
+      s.onload = () => { idx++; loadNext(); };
+      s.onerror = () => reject(new Error('No se pudo cargar: ' + scripts[idx]));
+      document.head.appendChild(s);
+    }
+    loadNext();
   });
   return FFmpegReady;
 }
@@ -478,6 +482,7 @@ async function initFFmpeg() {
     ]);
 
     loadText.textContent = 'Inicializando FFmpeg...';
+    console.log('FFmpeg URLs:', { coreURL: coreURL.substring(0, 30), wasmURL: wasmURL.substring(0, 30), classWorkerURL: classWorkerURL.substring(0, 30) });
     // Timeout de 60s para evitar que se quede colgado
     const loadPromise = ff.load({ coreURL, wasmURL, classWorkerURL });
     const timeoutPromise = new Promise((_, reject) =>
