@@ -346,19 +346,19 @@
     font-family: 'JetBrains Mono', monospace;
   }
   .post.tpl-marketing .post-title {
-    font-size: 44px; font-weight: 900; color: #fff; line-height: 1.05;
+    font-size: 44px; font-weight: 900; color: var(--mkt-text, #fff); line-height: 1.05;
     margin-bottom: 20px; text-transform: uppercase;
   }
   .post.tpl-marketing .post-title .mkt-highlight {
-    color: #FFD700; display: block;
+    color: var(--mkt-highlight, #FFD700); display: block;
   }
   .post.tpl-marketing .mkt-subtitle {
-    font-size: 16px; color: #cbd5e1; line-height: 1.6; margin-bottom: 28px;
+    font-size: 16px; color: var(--mkt-sub, #cbd5e1); line-height: 1.6; margin-bottom: 28px;
     max-width: 90%;
   }
   .post.tpl-marketing .mkt-cta {
     display: inline-block; padding: 14px 32px; border-radius: 6px;
-    background: #FFD700; color: #000; font-weight: 800; font-size: 14px;
+    background: var(--mkt-cta-bg, #FFD700); color: var(--mkt-cta-text, #000); font-weight: 800; font-size: 14px;
     text-transform: uppercase; letter-spacing: 1px; align-self: flex-start;
   }
   .post.tpl-marketing .mkt-url {
@@ -366,9 +366,19 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px; color: #64748b; letter-spacing: 0.5px;
   }
+  .post.tpl-marketing .mkt-bg-img {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: 0;
+  }
+  .post.tpl-marketing .mkt-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 1;
+  }
+  .post.tpl-marketing .post-content { z-index: 3; }
   .post.tpl-marketing .mkt-deco-stripe {
     position: absolute; top: 0; right: 0; width: 6px; height: 100%;
     background: linear-gradient(180deg, #FFD700, #FF8C00, #FFD700);
+    z-index: 2;
   }
   .post.size-fb.tpl-marketing { padding: 30px 40px; }
   .post.size-fb.tpl-marketing .post-title { font-size: 26px; }
@@ -724,6 +734,18 @@ const json = await data.json();
         <label>URL (pie de imagen)</label>
         <input id="mkt-url" value="codeatejd.com" oninput="updatePreview()">
       </div>
+      <div class="form-group">
+        <label>Foto de fondo (opcional)</label>
+        <div class="logo-upload-area" onclick="document.getElementById('mktBgInput').click()">
+          <input type="file" id="mktBgInput" accept="image/*" onchange="handleMktBg(this)">
+          <div class="upload-text" id="mktBgStatus">Click para subir foto</div>
+          <div id="mktBgThumb"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Oscuridad del overlay: <span id="mktOverlayVal">60</span>%</label>
+        <input type="range" id="mktOverlay" min="20" max="90" value="60" oninput="updateMktOverlay()" style="width:100%;accent-color:#667eea">
+      </div>
     </div>
 
     <!-- HIGHLIGHT fields -->
@@ -892,6 +914,10 @@ const json = await data.json();
             <div class="post-author-role" id="render-quote-role">CEO</div>
           </div>
         </div>
+
+        <!-- MARKETING background -->
+        <img id="mktBgImg" class="mkt-bg-img" style="display:none" src="" alt="">
+        <div id="mktOverlayDiv" class="mkt-overlay" style="display:none"></div>
 
         <!-- MARKETING content -->
         <div id="content-marketing" class="post-content" style="display:none">
@@ -1217,6 +1243,14 @@ const PALETTES = [
   { name: 'Magma',   bg: 'linear-gradient(135deg, #2d1200, #5a2500, #803800)', accent: '#fdba74', line: 'linear-gradient(90deg, #ea580c, #f97316, #fdba74)', cta: 'linear-gradient(135deg, #ea580c, #c2410c)' },
   { name: 'Royal',   bg: 'linear-gradient(135deg, #162038, #253a6a, #354f90)', accent: '#93c5fd', line: 'linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd)', cta: 'linear-gradient(135deg, #3b82f6, #2563eb)' },
   { name: 'Toxic',   bg: 'linear-gradient(135deg, #102e08, #1a5a10, #258020)', accent: '#a3e635', line: 'linear-gradient(90deg, #65a30d, #84cc16, #a3e635)', cta: 'linear-gradient(135deg, #65a30d, #4d7c0f)' },
+  { name: 'Lila',    bg: 'linear-gradient(135deg, #c4b5fd, #a78bfa, #8b5cf6)', accent: '#1e1b4b', line: 'linear-gradient(90deg, #8b5cf6, #a78bfa, #c4b5fd)', cta: 'linear-gradient(135deg, #7c3aed, #6d28d9)' },
+  { name: 'Rosa',    bg: 'linear-gradient(135deg, #fbb6ce, #f687b3, #ed64a6)', accent: '#1a1a1a', line: 'linear-gradient(90deg, #ec4899, #f472b6, #fbb6ce)', cta: 'linear-gradient(135deg, #db2777, #be185d)' },
+  { name: 'Cielo',   bg: 'linear-gradient(135deg, #bae6fd, #7dd3fc, #38bdf8)', accent: '#0c4a6e', line: 'linear-gradient(90deg, #0ea5e9, #38bdf8, #7dd3fc)', cta: 'linear-gradient(135deg, #0284c7, #0369a1)' },
+  { name: 'Menta',   bg: 'linear-gradient(135deg, #a7f3d0, #6ee7b7, #34d399)', accent: '#064e3b', line: 'linear-gradient(90deg, #10b981, #34d399, #6ee7b7)', cta: 'linear-gradient(135deg, #059669, #047857)' },
+  { name: 'Durazno', bg: 'linear-gradient(135deg, #fed7aa, #fdba74, #fb923c)', accent: '#1a1a1a', line: 'linear-gradient(90deg, #f97316, #fb923c, #fdba74)', cta: 'linear-gradient(135deg, #ea580c, #c2410c)' },
+  { name: 'Lavanda', bg: 'linear-gradient(135deg, #e0e7ff, #c7d2fe, #a5b4fc)', accent: '#312e81', line: 'linear-gradient(90deg, #6366f1, #818cf8, #a5b4fc)', cta: 'linear-gradient(135deg, #4f46e5, #4338ca)' },
+  { name: 'Crema',   bg: 'linear-gradient(135deg, #fef3c7, #fde68a, #fcd34d)', accent: '#1a1a1a', line: 'linear-gradient(90deg, #f59e0b, #fbbf24, #fcd34d)', cta: 'linear-gradient(135deg, #d97706, #b45309)' },
+  { name: 'Coral',   bg: 'linear-gradient(135deg, #fecaca, #fca5a5, #f87171)', accent: '#1a1a1a', line: 'linear-gradient(90deg, #ef4444, #f87171, #fca5a5)', cta: 'linear-gradient(135deg, #dc2626, #b91c1c)' },
 ];
 
 function generateRandomPaletteData() {
@@ -1355,6 +1389,13 @@ function setTemplate(tpl) {
 
   const canvas = document.getElementById('postCanvas');
   canvas.className = 'post tpl-' + tpl + ' size-' + currentSize;
+
+  // Hide marketing bg when switching away
+  if (tpl !== 'marketing') {
+    document.getElementById('mktBgImg').style.display = 'none';
+    document.getElementById('mktOverlayDiv').style.display = 'none';
+  }
+
   applyPalette();
   updateCounter();
   updatePreview();
@@ -1636,6 +1677,20 @@ function updatePreview() {
 
     document.getElementById('tipAvatar').style.display = 'none';
 
+    // Background image
+    const bgImg = document.getElementById('mktBgImg');
+    const overlayDiv = document.getElementById('mktOverlayDiv');
+    if (mktBgData) {
+      bgImg.src = mktBgData;
+      bgImg.style.display = '';
+      overlayDiv.style.display = '';
+      const ov = document.getElementById('mktOverlay').value;
+      overlayDiv.style.background = `rgba(0,0,0,${ov/100})`;
+    } else {
+      bgImg.style.display = 'none';
+      overlayDiv.style.display = 'none';
+    }
+
   } else if (currentTpl === 'cover') {
     const coverBadge = document.getElementById('cover-badge').value.trim();
     const coverTitle = document.getElementById('cover-title').value.trim();
@@ -1692,6 +1747,38 @@ function updatePreview() {
 /* ══════════════════════════════════════════════
    LOGO UPLOAD HANDLERS
    ══════════════════════════════════════════════ */
+
+/* ── Marketing Background ── */
+let mktBgData = null;
+
+function handleMktBg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    mktBgData = e.target.result;
+    document.getElementById('mktBgStatus').textContent = file.name;
+    document.getElementById('mktBgThumb').innerHTML = `<div class="logo-thumb" style="margin-top:8px;width:100%;height:60px"><img src="${mktBgData}" style="object-fit:cover;width:100%;height:100%;padding:0;border-radius:4px"><button class="remove-logo" onclick="event.stopPropagation();removeMktBg()">x</button></div>`;
+    updatePreview();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeMktBg() {
+  mktBgData = null;
+  document.getElementById('mktBgInput').value = '';
+  document.getElementById('mktBgStatus').textContent = 'Click para subir foto';
+  document.getElementById('mktBgThumb').innerHTML = '';
+  updatePreview();
+}
+
+function updateMktOverlay() {
+  const val = document.getElementById('mktOverlay').value;
+  document.getElementById('mktOverlayVal').textContent = val;
+  if (mktBgData) {
+    document.getElementById('mktOverlayDiv').style.background = `rgba(0,0,0,${val/100})`;
+  }
+}
 
 function handleCoverLogo(input) {
   const file = input.files[0];
