@@ -379,11 +379,26 @@ codeatejd.com</div>
 
 </div>
 
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js"></script>
-<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js"></script>
 <script>
-const { FFmpeg } = FFmpegWASM;
-const { fetchFile } = FFmpegUtil;
+// FFmpeg se carga bajo demanda (lazy) para no bloquear la UI
+let FFmpegReady = null;
+function loadFFmpegScripts() {
+  if (FFmpegReady) return FFmpegReady;
+  FFmpegReady = new Promise((resolve, reject) => {
+    const s1 = document.createElement('script');
+    s1.src = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/umd/ffmpeg.js';
+    s1.onload = () => {
+      const s2 = document.createElement('script');
+      s2.src = 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/util.js';
+      s2.onload = () => resolve();
+      s2.onerror = () => reject(new Error('No se pudo cargar FFmpeg util desde CDN'));
+      document.head.appendChild(s2);
+    };
+    s1.onerror = () => reject(new Error('No se pudo cargar FFmpeg desde CDN'));
+    document.head.appendChild(s1);
+  });
+  return FFmpegReady;
+}
 
 // State
 let ffmpeg = null;
@@ -440,6 +455,10 @@ async function initFFmpeg() {
   loadText.textContent = 'Cargando FFmpeg (primera vez puede tardar)...';
 
   try {
+    await loadFFmpegScripts();
+    const { FFmpeg } = FFmpegWASM;
+    if (!window.fetchFile) window.fetchFile = FFmpegUtil.fetchFile;
+
     const ff = new FFmpeg();
     ff.on('progress', ({ progress }) => {
       const pbar = document.getElementById('progressBar');
@@ -466,7 +485,7 @@ async function initFFmpeg() {
     retryBtn.textContent = 'Reintentar';
     retryBtn.className = 'btn btn-primary';
     retryBtn.style.marginTop = '1rem';
-    retryBtn.onclick = () => { retryBtn.remove(); initFFmpeg(); };
+    retryBtn.onclick = () => { retryBtn.remove(); FFmpegReady = null; initFFmpeg(); };
     loadText.parentElement.appendChild(retryBtn);
     throw err;
   }
