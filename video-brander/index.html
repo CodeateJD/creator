@@ -439,18 +439,37 @@ async function initFFmpeg() {
   overlay.classList.add('active');
   loadText.textContent = 'Cargando FFmpeg (primera vez puede tardar)...';
 
-  ffmpeg = new FFmpeg();
-  ffmpeg.on('progress', ({ progress }) => {
-    const pbar = document.getElementById('progressBar');
-    if (pbar) pbar.style.width = Math.round(progress * 100) + '%';
-  });
+  try {
+    const ff = new FFmpeg();
+    ff.on('progress', ({ progress }) => {
+      const pbar = document.getElementById('progressBar');
+      if (pbar) pbar.style.width = Math.round(progress * 100) + '%';
+    });
 
-  await ffmpeg.load({
-    coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
-    wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
-  });
+    // Timeout de 30s para evitar que se quede colgado
+    const loadPromise = ff.load({
+      coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+      wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
+    });
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Timeout: FFmpeg tardó más de 30s en cargar')), 30000)
+    );
+    await Promise.race([loadPromise, timeoutPromise]);
 
-  overlay.classList.remove('active');
+    ffmpeg = ff;
+    overlay.classList.remove('active');
+  } catch (err) {
+    console.error('FFmpeg init error:', err);
+    loadText.textContent = 'Error cargando FFmpeg: ' + err.message;
+    // Mostrar botón para reintentar
+    const retryBtn = document.createElement('button');
+    retryBtn.textContent = 'Reintentar';
+    retryBtn.className = 'btn btn-primary';
+    retryBtn.style.marginTop = '1rem';
+    retryBtn.onclick = () => { retryBtn.remove(); initFFmpeg(); };
+    loadText.parentElement.appendChild(retryBtn);
+    throw err;
+  }
 }
 
 // Steps
@@ -480,7 +499,12 @@ async function handleVideo(file) {
   videoFile = file;
   uploadStatus.textContent = 'Extrayendo frame...';
 
-  await initFFmpeg();
+  try {
+    await initFFmpeg();
+  } catch (err) {
+    uploadStatus.textContent = 'No se pudo cargar FFmpeg. Intenta recargar la página.';
+    return;
+  }
 
   // Write video to FFmpeg virtual filesystem
   const data = await fetchFile(file);
