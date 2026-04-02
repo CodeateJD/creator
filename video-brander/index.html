@@ -458,6 +458,7 @@ async function initFFmpeg() {
   try {
     await loadFFmpegScripts();
     const { FFmpeg } = FFmpegWASM;
+    const { toBlobURL } = FFmpegUtil;
     if (!window.fetchFile) window.fetchFile = FFmpegUtil.fetchFile;
 
     const ff = new FFmpeg();
@@ -466,13 +467,18 @@ async function initFFmpeg() {
       if (pbar) pbar.style.width = Math.round(progress * 100) + '%';
     });
 
-    // Timeout de 30s para evitar que se quede colgado
-    const loadPromise = ff.load({
-      coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
-      wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
-    });
+    loadText.textContent = 'Descargando FFmpeg core...';
+    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+    // toBlobURL descarga el archivo y lo convierte a Blob URL local,
+    // evitando el error de CORS con Web Workers
+    const coreURL = await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript');
+    const wasmURL = await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm');
+
+    loadText.textContent = 'Inicializando FFmpeg...';
+    // Timeout de 60s para evitar que se quede colgado
+    const loadPromise = ff.load({ coreURL, wasmURL });
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error('Timeout: FFmpeg tardó más de 30s en cargar')), 30000)
+      setTimeout(() => reject(new Error('Timeout: FFmpeg tardó más de 60s en cargar')), 60000)
     );
     await Promise.race([loadPromise, timeoutPromise]);
 
