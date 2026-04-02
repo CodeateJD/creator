@@ -324,6 +324,50 @@
     position: absolute; top: 0; left: 0; right: 0; height: 5px; z-index: 2;
   }
 
+  /* ── Template: Marketing ── */
+  .post.tpl-marketing {
+    padding: 60px 44px;
+    text-align: left;
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+  .post.tpl-marketing .mkt-topline {
+    font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
+    color: #FFD700; margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .post.tpl-marketing .post-title {
+    font-size: 38px; font-weight: 900; color: #fff; line-height: 1.05;
+    margin-bottom: 16px; text-transform: uppercase;
+  }
+  .post.tpl-marketing .post-title .mkt-highlight {
+    color: #FFD700; display: block;
+  }
+  .post.tpl-marketing .mkt-subtitle {
+    font-size: 14px; color: #cbd5e1; line-height: 1.6; margin-bottom: 24px;
+    max-width: 90%;
+  }
+  .post.tpl-marketing .mkt-cta {
+    display: inline-block; padding: 12px 28px; border-radius: 6px;
+    background: #FFD700; color: #000; font-weight: 800; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .post.tpl-marketing .mkt-url {
+    position: absolute; bottom: 24px; left: 44px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: #64748b; letter-spacing: 0.5px;
+  }
+  .post.tpl-marketing .mkt-deco-stripe {
+    position: absolute; top: 0; right: 0; width: 6px; height: 100%;
+    background: linear-gradient(180deg, #FFD700, #FF8C00, #FFD700);
+  }
+  .post.size-fb.tpl-marketing { padding: 30px 40px; }
+  .post.size-fb.tpl-marketing .post-title { font-size: 26px; }
+  .post.size-fb.tpl-marketing .mkt-subtitle { font-size: 12px; margin-bottom: 14px; }
+  .post.size-fb.tpl-marketing .mkt-cta { padding: 8px 20px; font-size: 11px; }
+  .post.size-story.tpl-marketing .post-title { font-size: 42px; }
+  .post.size-story.tpl-marketing .mkt-subtitle { font-size: 15px; }
+
   /* ── Template: Cover (Portada) ── */
   .post.tpl-cover .cover-badge {
     display: inline-block; padding: 8px 22px; border-radius: 50px;
@@ -359,6 +403,61 @@
   .post.size-fb.tpl-cover .cover-subtitle { font-size: 13px; }
   .post.size-fb.tpl-cover .cover-logo { width: 56px; height: 56px; border-radius: 12px; margin-bottom: 14px; }
   .post.size-story.tpl-cover .post-title { font-size: 42px; }
+
+  /* ── Template: Highlight (IG Story Highlights) ── */
+  .post.tpl-highlight {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px;
+  }
+  .post.tpl-highlight .hl-ring {
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    background: rgba(255,255,255,0.03);
+    transition: all 0.3s;
+  }
+  .post.tpl-highlight .hl-ring::before {
+    content: '';
+    position: absolute; inset: -6px;
+    border-radius: 50%;
+    border: 2px solid var(--accent, #667eea);
+    opacity: 0.3;
+  }
+  .post.tpl-highlight .hl-icon {
+    font-size: 72px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+  .post.tpl-highlight .hl-label {
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-family: 'Inter', sans-serif;
+  }
+  .post.tpl-highlight .hl-sublabel {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent, #667eea);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'JetBrains Mono', monospace;
+    position: absolute;
+    bottom: -32px;
+  }
+  .post.size-post.tpl-highlight .hl-ring { width: 260px; height: 260px; }
+  .post.size-fb.tpl-highlight .hl-ring { width: 160px; height: 160px; }
+  .post.size-fb.tpl-highlight .hl-icon { font-size: 44px; }
+  .post.size-fb.tpl-highlight .hl-label { font-size: 13px; letter-spacing: 2px; }
+  .post.size-story.tpl-highlight .hl-ring { width: 300px; height: 300px; }
+  .post.size-story.tpl-highlight .hl-icon { font-size: 80px; }
 
   /* ── Template: Logos ── */
   .post.tpl-logos .post-tag {
@@ -450,6 +549,8 @@
       <button class="tpl-btn" data-tpl="project" onclick="setTemplate('project')">&#128640; Proyecto</button>
       <button class="tpl-btn" data-tpl="service" onclick="setTemplate('service')">&#9881;&#65039; Servicio</button>
       <button class="tpl-btn" data-tpl="quote" onclick="setTemplate('quote')">&#128172; Testimonio</button>
+      <button class="tpl-btn" data-tpl="marketing" onclick="setTemplate('marketing')">&#128640; Marketing</button>
+      <button class="tpl-btn" data-tpl="highlight" onclick="setTemplate('highlight')">&#11093; Highlight</button>
       <button class="tpl-btn" data-tpl="cover" onclick="setTemplate('cover')">&#127912; Portada</button>
       <button class="tpl-btn" data-tpl="logos" onclick="setTemplate('logos')">&#11088; Logos</button>
     </div>
@@ -581,6 +682,50 @@ const json = await data.json();
       <div class="form-group">
         <label>Cargo / Empresa</label>
         <input id="quote-role" value="Gerente General, TechStore" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- MARKETING fields -->
+    <div id="fields-marketing" style="display:none">
+      <div class="form-group">
+        <label>Linea superior (pequeña)</label>
+        <input id="mkt-topline" value="DESARROLLO WEB EN CARACAS" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Headline (linea 1 — blanco)</label>
+        <input id="mkt-headline1" value="¿TU NEGOCIO" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Headline (linea 2 — amarillo/destacado)</label>
+        <input id="mkt-headline2" value="ESTÁ EN INTERNET?" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Subtitulo / Frase de dolor</label>
+        <textarea id="mkt-subtitle" rows="2" oninput="updatePreview()">El 93% de las decisiones de compra empiezan en Google. Si no estás ahí, no existes.</textarea>
+      </div>
+      <div class="form-group">
+        <label>Boton CTA</label>
+        <input id="mkt-cta" value="PIDE TU COTIZACIÓN" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>URL (pie de imagen)</label>
+        <input id="mkt-url" value="codeatejd.com" oninput="updatePreview()">
+      </div>
+    </div>
+
+    <!-- HIGHLIGHT fields -->
+    <div id="fields-highlight" style="display:none">
+      <div class="form-group">
+        <label>Icono (emoji)</label>
+        <input id="hl-icon" value="&#128187;" oninput="updatePreview()" style="font-size:28px;text-align:center">
+      </div>
+      <div class="form-group">
+        <label>Titulo (corto)</label>
+        <input id="hl-label" value="WEB" oninput="updatePreview()">
+      </div>
+      <div class="form-group">
+        <label>Subtitulo (opcional)</label>
+        <input id="hl-sublabel" value="codeateJD" oninput="updatePreview()">
       </div>
     </div>
 
@@ -732,6 +877,25 @@ const json = await data.json();
             <div class="avatar-circle" id="quoteAvatarSvg"></div>
             <div class="post-author" id="render-quote-author">Carlos</div>
             <div class="post-author-role" id="render-quote-role">CEO</div>
+          </div>
+        </div>
+
+        <!-- MARKETING content -->
+        <div id="content-marketing" class="post-content" style="display:none">
+          <div class="mkt-topline" id="render-mkt-topline">DESARROLLO WEB EN CARACAS</div>
+          <div class="post-title"><span id="render-mkt-h1">¿TU NEGOCIO</span> <span class="mkt-highlight" id="render-mkt-h2">ESTÁ EN INTERNET?</span></div>
+          <div class="mkt-subtitle" id="render-mkt-subtitle">El 93% de las decisiones de compra empiezan en Google. Si no estás ahí, no existes.</div>
+          <div class="mkt-cta" id="render-mkt-cta">PIDE TU COTIZACIÓN</div>
+          <div class="mkt-url" id="render-mkt-url">codeatejd.com</div>
+          <div class="mkt-deco-stripe"></div>
+        </div>
+
+        <!-- HIGHLIGHT content -->
+        <div id="content-highlight" class="post-content" style="display:none">
+          <div class="hl-ring">
+            <div class="hl-icon" id="render-hl-icon">&#128187;</div>
+            <div class="hl-label" id="render-hl-label">WEB</div>
+            <div class="hl-sublabel" id="render-hl-sublabel">codeateJD</div>
           </div>
         </div>
 
@@ -972,6 +1136,34 @@ const LIBRARY = {
     { text: 'Conectaron los sensores de la planta al dashboard. Detectamos fallas antes de que ocurran', author: 'Ricardo Marin', role: 'Jefe de Planta, IndustriaTech' },
   ],
 
+  marketing: [
+    { topline: 'DESARROLLO WEB EN CARACAS', h1: '¿TU NEGOCIO', h2: 'ESTÁ EN INTERNET?', subtitle: 'El 93% de las decisiones de compra empiezan en Google. Si no estás ahí, no existes.', cta: 'PIDE TU COTIZACIÓN', url: 'codeatejd.com' },
+    { topline: 'PÁGINAS WEB A MEDIDA', h1: 'CREAMOS TU', h2: 'SITIO WEB PROFESIONAL', subtitle: 'Nada de plantillas genéricas. Código limpio, rápido y optimizado para Google.', cta: 'QUIERO MI PÁGINA', url: 'codeatejd.com' },
+    { topline: 'POSICIÓNATE EN GOOGLE', h1: '¿TIENES WEB PERO', h2: 'NADIE LA ENCUENTRA?', subtitle: 'SEO + velocidad + diseño responsivo. Hacemos que Google te ponga primero.', cta: 'MEJORA TU SEO', url: 'codeatejd.com' },
+    { topline: 'SOPORTE TÉCNICO WEB', h1: 'TU PÁGINA NECESITA', h2: 'MANTENIMIENTO', subtitle: 'No basta con tener una web. Hay que actualizarla, protegerla y optimizarla.', cta: 'CONTÁCTAME', url: 'codeatejd.com' },
+    { topline: 'DESARROLLO WEB FREELANCE', h1: 'TU COMPETENCIA', h2: 'YA TIENE PÁGINA WEB', subtitle: 'Desarrollo profesional en Caracas. Sin WordPress. Sin plantillas. Código real a tu medida.', cta: 'EMPIEZA HOY', url: 'codeatejd.com' },
+    { topline: 'HERRAMIENTAS WEB GRATIS', h1: 'VIDEO BRANDER', h2: '100% EN TU NAVEGADOR', subtitle: 'Ponle tu marca a cualquier video sin instalar nada. Sin servidores, sin apps.', cta: 'PRUÉBALA GRATIS', url: 'codeatejd.com/creator' },
+    { topline: 'TIENDAS ONLINE', h1: 'CREAMOS TU', h2: 'TIENDA DIGITAL', subtitle: 'Carrito, pagos, inventario y panel admin. Vende desde el día uno.', cta: 'QUIERO MI TIENDA', url: 'codeatejd.com' },
+    { topline: 'APPS MÓVILES', h1: '¿NECESITAS', h2: 'UNA APP?', subtitle: 'Flutter + Firebase. Una sola base de código para iOS y Android. Rendimiento nativo.', cta: 'HABLEMOS', url: 'codeatejd.com' },
+    { topline: 'REPORTES & DASHBOARDS', h1: 'DATOS QUE HABLAN', h2: 'DECISIONES CLARAS', subtitle: 'Convierte Excel en dashboards interactivos. Reportes automatizados para tu negocio.', cta: 'VER DEMOS', url: 'codeatejd.com' },
+    { topline: 'INFRAESTRUCTURA CLOUD', h1: 'TU APP', h2: 'SIEMPRE ONLINE', subtitle: 'Servidores, SSL, backups, deploy automático. Tu proyecto en línea 24/7.', cta: 'MONTAR MI SERVIDOR', url: 'codeatejd.com' },
+    { topline: 'TRANSFORMACIÓN DIGITAL', h1: '¿SIGUES CON', h2: 'EXCEL Y WHATSAPP?', subtitle: 'Automatiza procesos, integra sistemas y lleva tu empresa al siguiente nivel.', cta: 'MODERNIZA TU NEGOCIO', url: 'codeatejd.com' },
+    { topline: 'CÓDIGO REAL', h1: 'NO USAMOS', h2: 'PLANTILLAS', subtitle: 'Cada proyecto es único. Código limpio, documentado y optimizado para tu negocio.', cta: 'CONSULTA GRATIS', url: 'codeatejd.com' },
+  ],
+
+  highlight: [
+    { icon: '\u{1F4BB}', label: 'WEB', sublabel: 'codeateJD' },
+    { icon: '\u{1F6E0}', label: 'TOOLS', sublabel: 'codeateJD' },
+    { icon: '\u{1F4A1}', label: 'TIPS', sublabel: 'codeateJD' },
+    { icon: '\u{1F4B0}', label: 'PRECIOS', sublabel: 'codeateJD' },
+    { icon: '\u{1F3AF}', label: 'SEO', sublabel: 'codeateJD' },
+    { icon: '\u{2699}', label: 'PROCESO', sublabel: 'codeateJD' },
+    { icon: '\u{1F4F1}', label: 'APPS', sublabel: 'codeateJD' },
+    { icon: '\u{2601}', label: 'CLOUD', sublabel: 'codeateJD' },
+    { icon: '\u{1F4AC}', label: 'REVIEWS', sublabel: 'codeateJD' },
+    { icon: '\u{1F464}', label: 'SOBRE MI', sublabel: 'codeateJD' },
+  ],
+
   cover: [
     { badge: '// Nuevo Post', title: 'codeateJD', subtitle: 'Desarrollo web, apps moviles & soluciones IT' },
     { badge: '// Serie', title: 'Tips de JavaScript', subtitle: 'Trucos y buenas practicas para escribir mejor codigo' },
@@ -1036,7 +1228,7 @@ let currentTpl = 'tip';
 let currentSize = 'post';
 let currentPalette = 0;
 let customPalette = null; // for random-generated
-const usedIndices = { tip: [], project: [], service: [], quote: [], cover: [], logos: [] };
+const usedIndices = { tip: [], project: [], service: [], quote: [], marketing: [], highlight: [], cover: [], logos: [] };
 let uploadedLogos = []; // base64 data URLs
 let coverLogoData = null; // base64 for cover logo
 
@@ -1198,6 +1390,17 @@ function randomContent() {
     document.getElementById('quote-text').value = item.text;
     document.getElementById('quote-author').value = item.author;
     document.getElementById('quote-role').value = item.role;
+  } else if (currentTpl === 'highlight') {
+    document.getElementById('hl-icon').value = item.icon;
+    document.getElementById('hl-label').value = item.label;
+    document.getElementById('hl-sublabel').value = item.sublabel;
+  } else if (currentTpl === 'marketing') {
+    document.getElementById('mkt-topline').value = item.topline;
+    document.getElementById('mkt-headline1').value = item.h1;
+    document.getElementById('mkt-headline2').value = item.h2;
+    document.getElementById('mkt-subtitle').value = item.subtitle;
+    document.getElementById('mkt-cta').value = item.cta;
+    document.getElementById('mkt-url').value = item.url;
   } else if (currentTpl === 'cover') {
     document.getElementById('cover-badge').value = item.badge;
     document.getElementById('cover-title').value = item.title;
@@ -1377,6 +1580,49 @@ function updatePreview() {
       canvas.classList.add('no-avatar');
     }
 
+  } else if (currentTpl === 'highlight') {
+    const icon = document.getElementById('hl-icon').value.trim();
+    const label = document.getElementById('hl-label').value.trim();
+    const sublabel = document.getElementById('hl-sublabel').value.trim();
+
+    document.getElementById('render-hl-icon').textContent = icon;
+    document.getElementById('render-hl-label').textContent = label;
+
+    const subEl = document.getElementById('render-hl-sublabel');
+    subEl.textContent = sublabel;
+    subEl.style.display = sublabel ? '' : 'none';
+
+    document.getElementById('tipAvatar').style.display = 'none';
+
+  } else if (currentTpl === 'marketing') {
+    const topline = document.getElementById('mkt-topline').value.trim();
+    const h1 = document.getElementById('mkt-headline1').value.trim();
+    const h2 = document.getElementById('mkt-headline2').value.trim();
+    const subtitle = document.getElementById('mkt-subtitle').value.trim();
+    const cta = document.getElementById('mkt-cta').value.trim();
+    const url = document.getElementById('mkt-url').value.trim();
+
+    const topEl = document.getElementById('render-mkt-topline');
+    topEl.textContent = topline;
+    topEl.style.display = topline ? '' : 'none';
+
+    document.getElementById('render-mkt-h1').textContent = h1;
+    document.getElementById('render-mkt-h2').textContent = h2;
+
+    const subEl = document.getElementById('render-mkt-subtitle');
+    subEl.textContent = subtitle;
+    subEl.style.display = subtitle ? '' : 'none';
+
+    const ctaEl = document.getElementById('render-mkt-cta');
+    ctaEl.textContent = cta;
+    ctaEl.style.display = cta ? '' : 'none';
+
+    const urlEl = document.getElementById('render-mkt-url');
+    urlEl.textContent = url;
+    urlEl.style.display = url ? '' : 'none';
+
+    document.getElementById('tipAvatar').style.display = 'none';
+
   } else if (currentTpl === 'cover') {
     const coverBadge = document.getElementById('cover-badge').value.trim();
     const coverTitle = document.getElementById('cover-title').value.trim();
@@ -1506,6 +1752,8 @@ const HASHTAG_POOLS = {
   project: ['#programacion','#proyecto','#developer','#portfolio','#codeateJD','#webdev','#appdevelopment','#tech','#software','#freelance','#devlife'],
   service: ['#servicios','#desarrolloweb','#freelance','#codeateJD','#negociodigital','#transformaciondigital','#tecnologia','#pymes','#emprendimiento','#solucionesIT'],
   quote: ['#testimonio','#clientefeliz','#codeateJD','#resultados','#freelance','#desarrolloweb','#software','#confianza','#calidad','#casodeexito'],
+  highlight: ['#codeateJD','#developer','#highlights','#instagram','#webdev','#programacion','#freelance','#contenidotech','#branding','#socialmedia'],
+  marketing: ['#desarrolloweb','#paginaweb','#codeateJD','#caracas','#negociodigital','#seo','#marketingdigital','#emprendimiento','#pymes','#freelance','#webdev','#venezuela'],
   cover: ['#codeateJD','#developer','#programacion','#tech','#codigo','#software','#freelance','#devlife','#webdev','#contenidotech'],
   logos: ['#aliados','#partners','#codeateJD','#networking','#colaboracion','#empresas','#tecnologia','#negocio','#confianza','#equipo'],
 };
@@ -1541,6 +1789,18 @@ const CAPTION_INTROS = {
     '🤝 Resultados que hablan:',
     '💯 Feedback de cliente:',
     '🏆 Caso de éxito:',
+  ],
+  highlight: [
+    '✨ Nuevo highlight:',
+    '📌 Stories destacadas:',
+    '🔮 Portada de highlight:',
+  ],
+  marketing: [
+    '🔥 ¿Tu negocio está en internet?',
+    '🚀 Impulsa tu negocio digital:',
+    '💻 Desarrollo web profesional:',
+    '📈 Haz crecer tu negocio online:',
+    '🎯 Tu próximo paso digital:',
   ],
   cover: [
     '📢 Nuevo contenido:',
@@ -1590,6 +1850,16 @@ function generateCaption() {
     const author = document.getElementById('quote-author').value;
     const role = document.getElementById('quote-role').value;
     body = `\n\n"${text}"\n\n— ${author}, ${role}`;
+  } else if (currentTpl === 'highlight') {
+    const label = document.getElementById('hl-label').value;
+    body = `\n\nNueva historia destacada: ${label}\n\nRevisa mis highlights para ver todo mi contenido organizado 👆`;
+  } else if (currentTpl === 'marketing') {
+    const h1 = document.getElementById('mkt-headline1').value;
+    const h2 = document.getElementById('mkt-headline2').value;
+    const subtitle = document.getElementById('mkt-subtitle').value;
+    const cta = document.getElementById('mkt-cta').value;
+    const url = document.getElementById('mkt-url').value;
+    body = `\n\n${h1} ${h2}\n\n${subtitle}\n\n👉 ${cta}\n🔗 ${url}`;
   } else if (currentTpl === 'cover') {
     const title = document.getElementById('cover-title').value;
     const subtitle = document.getElementById('cover-subtitle').value;
@@ -1645,6 +1915,13 @@ function generateAltText() {
     const author = document.getElementById('quote-author').value;
     const role = document.getElementById('quote-role').value;
     return `Testimonio de ${author}, ${role}. Reseña sobre el trabajo realizado por codeateJD en desarrollo de software.`;
+  } else if (currentTpl === 'highlight') {
+    const label = document.getElementById('hl-label').value;
+    return `Portada de historia destacada de Instagram para codeateJD. Categoría: "${label}". Diseño circular con icono y fondo oscuro.`;
+  } else if (currentTpl === 'marketing') {
+    const h1 = document.getElementById('mkt-headline1').value;
+    const h2 = document.getElementById('mkt-headline2').value;
+    return `Imagen promocional de marketing de codeateJD. Headline: "${h1} ${h2}". Estilo oscuro con texto en amarillo y blanco, diseño profesional para redes sociales.`;
   } else if (currentTpl === 'cover') {
     const title = document.getElementById('cover-title').value;
     const subtitle = document.getElementById('cover-subtitle').value;
