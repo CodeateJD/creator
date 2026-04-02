@@ -326,16 +326,23 @@
 
   /* ── Template: Marketing ── */
   .post.tpl-marketing {
-    padding: 0 44px 70px;
+    padding: 44px;
     text-align: left;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: flex-start;
   }
-  .post.tpl-marketing .post-brand { display: none; }
+  .post.tpl-marketing .post-brand { display: none !important; }
+  .post.tpl-marketing .deco-dots { display: none; }
+  .post.tpl-marketing .deco-line { display: none; }
+  .post.tpl-marketing .post-content {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    height: 100%; width: 100%;
+  }
   .post.tpl-marketing .mkt-topline {
     font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
-    color: #FFD700; margin-bottom: 18px;
+    color: #FFD700; margin-bottom: auto;
     font-family: 'JetBrains Mono', monospace;
+    padding-top: 20px;
   }
   .post.tpl-marketing .post-title {
     font-size: 44px; font-weight: 900; color: #fff; line-height: 1.05;
@@ -351,10 +358,10 @@
   .post.tpl-marketing .mkt-cta {
     display: inline-block; padding: 14px 32px; border-radius: 6px;
     background: #FFD700; color: #000; font-weight: 800; font-size: 14px;
-    text-transform: uppercase; letter-spacing: 1px;
+    text-transform: uppercase; letter-spacing: 1px; align-self: flex-start;
   }
   .post.tpl-marketing .mkt-url {
-    position: absolute; bottom: 28px; left: 44px;
+    margin-top: 20px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px; color: #64748b; letter-spacing: 0.5px;
   }
@@ -362,14 +369,16 @@
     position: absolute; top: 0; right: 0; width: 6px; height: 100%;
     background: linear-gradient(180deg, #FFD700, #FF8C00, #FFD700);
   }
-  .post.size-fb.tpl-marketing { padding: 0 40px 40px; }
+  .post.size-fb.tpl-marketing { padding: 30px 40px; }
   .post.size-fb.tpl-marketing .post-title { font-size: 26px; }
   .post.size-fb.tpl-marketing .mkt-subtitle { font-size: 12px; margin-bottom: 14px; }
   .post.size-fb.tpl-marketing .mkt-cta { padding: 8px 20px; font-size: 11px; }
-  .post.size-story.tpl-marketing .post-title { font-size: 52px; }
-  .post.size-story.tpl-marketing .mkt-subtitle { font-size: 17px; }
-  .post.size-story.tpl-marketing .mkt-topline { font-size: 15px; margin-bottom: 22px; }
-  .post.size-story.tpl-marketing .mkt-cta { padding: 16px 36px; font-size: 15px; }
+  .post.size-story.tpl-marketing { padding: 50px 44px; }
+  .post.size-story.tpl-marketing .mkt-topline { font-size: 16px; margin-bottom: auto; padding-top: 30px; }
+  .post.size-story.tpl-marketing .post-title { font-size: 54px; margin-bottom: 24px; }
+  .post.size-story.tpl-marketing .mkt-subtitle { font-size: 18px; margin-bottom: 36px; }
+  .post.size-story.tpl-marketing .mkt-cta { padding: 18px 40px; font-size: 16px; }
+  .post.size-story.tpl-marketing .mkt-url { font-size: 13px; margin-top: 28px; }
 
   /* ── Template: Cover (Portada) ── */
   .post.tpl-cover .cover-badge {
