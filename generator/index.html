@@ -337,12 +337,19 @@
   .post.tpl-marketing .mkt-url { display: none !important; }
   .post.tpl-marketing .tip-avatar { display: none !important; }
   .post.tpl-marketing .post-content {
-    display: flex; flex-direction: column; justify-content: flex-end;
+    display: flex; flex-direction: column; justify-content: space-between;
     height: 100%; width: 100%;
   }
+  .post.tpl-marketing .mkt-logo-top {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .post.tpl-marketing .mkt-logo-codeate { color: #fff; }
+  .post.tpl-marketing .mkt-logo-jd { color: #fff; font-weight: 900; }
   .post.tpl-marketing .mkt-topline {
     font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 3px;
-    color: #FFD700; margin-bottom: 24px;
+    color: #FFD700; margin-bottom: 18px;
     font-family: 'JetBrains Mono', monospace;
   }
   .post.tpl-marketing .post-title {
@@ -384,9 +391,10 @@
   .post.size-fb.tpl-marketing .post-title { font-size: 26px; }
   .post.size-fb.tpl-marketing .mkt-subtitle { font-size: 12px; margin-bottom: 14px; }
   .post.size-fb.tpl-marketing .mkt-cta { padding: 8px 20px; font-size: 11px; }
-  .post.size-story.tpl-marketing { padding: 50px 44px; justify-content: center; }
-  .post.size-story.tpl-marketing .mkt-topline { font-size: 16px; margin-bottom: 30px; }
-  .post.size-story.tpl-marketing .post-title { font-size: 58px; margin-bottom: 28px; }
+  .post.size-story.tpl-marketing { padding: 50px 44px; }
+  .post.size-story.tpl-marketing .mkt-logo-top { font-size: 26px; margin-bottom: 0; }
+  .post.size-story.tpl-marketing .mkt-topline { font-size: 16px; margin-bottom: 20px; }
+  .post.size-story.tpl-marketing .post-title { font-size: 54px; margin-bottom: 24px; }
   .post.size-story.tpl-marketing .mkt-subtitle { font-size: 18px; margin-bottom: 36px; }
   .post.size-story.tpl-marketing .mkt-cta { padding: 18px 40px; font-size: 16px; }
   .post.size-story.tpl-marketing .mkt-url { font-size: 13px; margin-top: 28px; }
@@ -921,11 +929,13 @@ const json = await data.json();
 
         <!-- MARKETING content -->
         <div id="content-marketing" class="post-content" style="display:none">
+          <div class="mkt-logo-top">
+            <span class="mkt-logo-codeate">codeate</span><span class="mkt-logo-jd"><span style="color:#FFD700">&gt;</span>JD</span>
+          </div>
           <div class="mkt-topline" id="render-mkt-topline">DESARROLLO WEB EN CARACAS</div>
           <div class="post-title"><span id="render-mkt-h1">¿TU NEGOCIO</span> <span class="mkt-highlight" id="render-mkt-h2">ESTÁ EN INTERNET?</span></div>
           <div class="mkt-subtitle" id="render-mkt-subtitle">El 93% de las decisiones de compra empiezan en Google. Si no estás ahí, no existes.</div>
           <div class="mkt-cta" id="render-mkt-cta">PIDE TU COTIZACIÓN</div>
-          <div class="mkt-url" id="render-mkt-url">codeatejd.com</div>
           <div class="mkt-deco-stripe"></div>
         </div>
 
