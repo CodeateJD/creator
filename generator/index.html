@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- v2 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -936,6 +937,7 @@ const json = await data.json();
           <div class="post-title"><span id="render-mkt-h1">¿TU NEGOCIO</span> <span class="mkt-highlight" id="render-mkt-h2">ESTÁ EN INTERNET?</span></div>
           <div class="mkt-subtitle" id="render-mkt-subtitle">El 93% de las decisiones de compra empiezan en Google. Si no estás ahí, no existes.</div>
           <div class="mkt-cta" id="render-mkt-cta">PIDE TU COTIZACIÓN</div>
+          <div class="mkt-url" id="render-mkt-url">codeatejd.com</div>
           <div class="mkt-deco-stripe"></div>
         </div>
 
@@ -1682,8 +1684,10 @@ function updatePreview() {
     ctaEl.style.display = cta ? '' : 'none';
 
     const urlEl = document.getElementById('render-mkt-url');
-    urlEl.textContent = url;
-    urlEl.style.display = url ? '' : 'none';
+    if (urlEl) {
+      urlEl.textContent = url;
+      urlEl.style.display = url ? '' : 'none';
+    }
 
     document.getElementById('tipAvatar').style.display = 'none';
 
