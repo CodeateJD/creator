@@ -1,0 +1,122 @@
+/* ═══════════════════════════════════════════════════════════════
+   codeateJD Studio — layout.css
+   Grid structure: app, topbar, body, canvas, statusbar
+   ═══════════════════════════════════════════════════════════════ */
+
+.app {
+  display: grid;
+  grid-template-rows: 52px 1fr 24px;
+  height: 100vh;
+}
+
+/* ══════════ TOPBAR ══════════ */
+.topbar {
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  user-select: none;
+}
+
+.topbar-left,
+.topbar-center,
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-right { gap: 8px; }
+
+/* ══════════ BODY ══════════ */
+.body {
+  display: grid;
+  grid-template-columns: 64px 1fr 300px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ══════════ CANVAS AREA ══════════ */
+.canvas-area {
+  background: var(--bg-0);
+  overflow: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  background: #fff;
+  box-shadow: var(--shadow-lg);
+  border-radius: 2px;
+  flex-shrink: 0;
+  transition: box-shadow var(--t-med);
+}
+
+.canvas-wrapper canvas { display: block; }
+.canvas-container { border-radius: 2px; }
+
+/* Snap alignment guides */
+.snap-guide-v, .snap-guide-h {
+  position: absolute;
+  z-index: 999;
+  pointer-events: none;
+}
+.snap-guide-v {
+  top: 0; bottom: 0; width: 1px;
+  background: var(--accent);
+  opacity: 0.7;
+  box-shadow: 0 0 4px var(--accent);
+}
+.snap-guide-h {
+  left: 0; right: 0; height: 1px;
+  background: var(--accent);
+  opacity: 0.7;
+  box-shadow: 0 0 4px var(--accent);
+}
+
+/* ══════════ PROPERTIES PANEL STRUCTURE ══════════ */
+.properties {
+  background: var(--bg-2);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ══════════ STATUSBAR ══════════ */
+.statusbar {
+  background: var(--bg-2);
+  border-top: 1px solid var(--border);
+  padding: 0 14px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  user-select: none;
+}
+.status-center { text-align: center; }
+.status-right { text-align: right; }
+.status-right::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--success);
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px var(--success);
+}

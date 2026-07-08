@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>codeateJD Studio — Editor de Imagenes</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="description" content="codeateJD Studio. Editor profesional de imagenes para redes sociales: texto, imagenes, formas, iconos y plantillas. Por codeateJD.">
+<meta name="author" content="Jose Delpino - codeateJD">
+<meta name="robots" content="index, follow">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="codeateJD Studio">
+<meta property="og:description" content="Editor profesional para imagenes de redes sociales.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;600;700;900&family=Montserrat:wght@400;600;700;900&family=Playfair+Display:wght@400;700;900&family=Roboto:wght@400;700;900&family=Lora:wght@400;700&family=Raleway:wght@400;700;900&family=Bebas+Neue&family=Space+Grotesk:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/properties.css">
+<link rel="stylesheet" href="css/pdf.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+
+    <div class="topbar-left">
+      <a href="/creator/" class="back-btn" title="Volver al hub">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </a>
+      <div class="brand">
+        <span class="brand-name">codeate<span class="grad">JD</span></span>
+        <span class="brand-product">Studio</span>
+      </div>
+    </div>
+
+    <div class="topbar-center">
+      <div class="format-switcher" role="tablist" aria-label="Formato del lienzo">
+        <button data-format="post" class="active" title="1080 x 1080 px — Instagram / Facebook cuadrado">
+          <span class="fmt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="5" width="14" height="14" rx="1"/></svg></span>
+          <span class="fmt-label">Post 1:1</span>
+        </button>
+        <button data-format="fb" title="1200 x 630 px — Facebook feed / link preview">
+          <span class="fmt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="10" rx="1"/></svg></span>
+          <span class="fmt-label">Facebook</span>
+        </button>
+        <button data-format="story" title="1080 x 1920 px — Instagram / Facebook Story / Reel">
+          <span class="fmt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="3" width="10" height="18" rx="1"/></svg></span>
+          <span class="fmt-label">Story 9:16</span>
+        </button>
+        <button data-format="linkedin" title="1200 x 627 px — LinkedIn post">
+          <span class="fmt-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="12" rx="1"/></svg></span>
+          <span class="fmt-label">LinkedIn</span>
+        </button>
+        <button data-format="x" title="1600 x 900 px — X (Twitter) post">
+          <span class="fmt-icon"><svg viewBox="0 0 1200 1227" fill="currentColor"><path d="M714 519 1160 0h-106L667 451 357 0H0l468 681L0 1227h106l409-476 327 476h357L714 519zm-145 168-47-68L144 79h163l304 437 47 68 395 566H890L569 687z"/></svg></span>
+          <span class="fmt-label">X</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div class="btn-group">
+        <button class="btn-icon" id="undoBtn" title="Deshacer (Ctrl+Z)" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></svg>
+        </button>
+        <button class="btn-icon" id="redoBtn" title="Rehacer (Ctrl+Y)" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 15-6.7L21 13"/></svg>
+        </button>
+      </div>
+
+      <div class="active-color-wrap" id="activeColorWrap">
+        <button class="active-color-swatch active" data-slot="0" title="Color 1 — clic: activar, doble clic: editar" style="background:#667eea"></button>
+        <button class="active-color-swatch" data-slot="1" title="Color 2 (Pro) — clic: activar, doble clic: editar" style="background:#4ade80"></button>
+        <button class="active-color-swatch" data-slot="2" title="Color 3 (Pro) — clic: activar, doble clic: editar" style="background:#f5576c"></button>
+      </div>
+
+      <div class="zoom-controls">
+        <button id="zoomOut" title="Alejar">−</button>
+        <span id="zoomLabel">100%</span>
+        <button id="zoomIn" title="Acercar">+</button>
+        <button id="fitBtn" title="Ajustar a pantalla">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14v6h6M20 10V4h-6M20 20l-6-6M4 4l6 6"/></svg>
+        </button>
+      </div>
+
+      <button class="btn-primary" id="exportBtn" title="Guardar / Abrir">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        <span>Guardar / Abrir</span>
+      </button>
+
+      <div class="user-badge-wrap" id="userBadge"></div>
+    </div>
+
+  </header>
+
+  <!-- ============ BODY ============ -->
+  <div class="body">
+
+    <!-- Left tools -->
+    <aside class="tools" aria-label="Herramientas">
+      <button class="tool active" data-tool="select" title="Seleccionar / Mover (V)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 17.39 2.51-7.11 7.11-2.51L3 3z"/></svg>
+        <span>Mover</span>
+      </button>
+      <button class="tool" data-tool="text" title="Texto (T)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+        <span>Texto</span>
+      </button>
+      <button class="tool" data-tool="image" title="Imagen (I)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Imagen</span>
+      </button>
+      <div class="tool-wrapper">
+        <button class="tool" id="toolMenuBtn" title="Herramientas creativas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          <span>Tools</span>
+        </button>
+        <div class="tool-submenu" id="toolMenuSubmenu" role="menu">
+          <button class="tool-submenu-item" data-subtool="shape" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+            <span class="tsi-label">Formas</span>
+            <span class="tsi-kbd">R</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="icon" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span class="tsi-label">Iconos</span>
+            <span class="tsi-kbd">I</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="draw" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+            <span class="tsi-label">Lápiz libre</span>
+            <span class="tsi-kbd">B</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="eyedrop" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22l1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="M15 6l3.4-3.4a2.12 2.12 0 1 1 3 3L18 9l.4.4a2.12 2.12 0 0 1 0 3 2.12 2.12 0 0 1-3 0l-9.8-9.8a2.12 2.12 0 0 1 0-3 2.12 2.12 0 0 1 3 0l.4.4L12 3z"/></svg>
+            <span class="tsi-label">Gotero</span>
+            <span class="tsi-kbd">G</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="fill" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11h2m-1-1v2M5.5 13l5.5 5.5 6.5-6.5-5.5-5.5-6.5 6.5z"/><path d="M5.5 13L2 16l3 3 3.5-3.5"/></svg>
+            <span class="tsi-label">Relleno</span>
+            <span class="tsi-kbd">F</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="bgauto" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+            <span class="tsi-label">Quitar fondo</span>
+            <span class="tsi-badge">Pro</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="eraser" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H9L4 15a2 2 0 0 1 0-2.83l8.17-8.17a2 2 0 0 1 2.83 0l5 5a2 2 0 0 1 0 2.83L14 18"/><line x1="18" y1="13" x2="10" y2="5"/></svg>
+            <span class="tsi-label">Borrador</span>
+            <span class="tsi-kbd">E</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="wand" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8l1.4 1.4M15 9c0-3.87 3.13-7 7-7M10.5 7.5l1.4 1.4M3 21l9-9"/></svg>
+            <span class="tsi-label">Varita mágica</span>
+            <span class="tsi-badge">Pro</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="lasso" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 22a5 5 0 0 1-2-4"/><path d="M7 16.93c.96.43 1.96.74 2.99.91"/><path d="M3.34 14A6.8 6.8 0 0 1 2 10c0-4.42 4.48-8 10-8s10 3.58 10 8a7.19 7.19 0 0 1-.33 2"/><path d="M5 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/><path d="M14.33 22h-.09a.35.35 0 0 1-.24-.32v-10a.34.34 0 0 1 .33-.34c.08 0 .15.03.21.08l7.34 6a.33.33 0 0 1-.21.59h-4.49l-2.57 3.85a.35.35 0 0 1-.28.14v0z"/></svg>
+            <span class="tsi-label">Lasso</span>
+            <span class="tsi-badge">Pro</span>
+          </button>
+          <button class="tool-submenu-item" data-subtool="filters" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="19" cy="13" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="10" cy="17.5" r="2.5"/></svg>
+            <span class="tsi-label">Filtros</span>
+          </button>
+        </div>
+      </div>
+      <button class="tool" data-tool="background" title="Fondo del lienzo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        <span>Fondo</span>
+      </button>
+
+      <div class="tool-separator"></div>
+
+      <button class="tool" data-tool="template" title="Plantillas predefinidas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Plantilla</span>
+      </button>
+
+      <div class="tool-separator"></div>
+
+      <div class="tool-wrapper">
+        <button class="tool" id="toolPdf" title="Herramientas PDF">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6M9 17h4"/></svg>
+          <span>PDF</span>
+        </button>
+        <div class="pdf-submenu" id="pdfSubmenu" role="menu">
+          <button class="pdf-submenu-item" data-tab="pdf" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span style="flex:1">PDF a Imagen</span>
+            <span class="tsi-badge">Pro</span>
+          </button>
+          <button class="pdf-submenu-item" data-tab="split" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+            <span style="flex:1">Separar PDF</span>
+            <span class="tsi-badge">Pro</span>
+          </button>
+          <button class="pdf-submenu-item" data-tab="merge" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span style="flex:1">Unir PDF</span>
+            <span class="tsi-badge">Pro</span>
+          </button>
+          <button class="pdf-submenu-item" data-tab="organize" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Organizar páginas
+          </button>
+          <button class="pdf-submenu-item" data-tab="annotate" role="menuitem">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Anotar PDF
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Canvas area -->
+    <main class="canvas-area" id="canvasArea">
+      <div class="canvas-wrapper" id="canvasWrapper">
+        <canvas id="c"></canvas>
+      </div>
+    </main>
+
+    <!-- Right properties panel -->
+    <aside class="properties">
+      <div class="panel-tabs" role="tablist">
+        <button class="panel-tab active" data-panel="props">Propiedades</button>
+        <button class="panel-tab" data-panel="layers">Capas</button>
+        <button class="panel-tab" data-panel="publish">Publicar</button>
+      </div>
+
+      <div class="panel-content" id="panelProps">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><path d="M3 3l7.07 17.39 2.51-7.11 7.11-2.51L3 3z"/></svg>
+          <p>Selecciona un elemento del lienzo para ver y editar sus propiedades.</p>
+        </div>
+      </div>
+
+      <div class="panel-content hidden" id="panelPublish"></div>
+
+      <div class="panel-content hidden" id="panelLayers">
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="empty-icon"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          <p>Sin capas aun. Agrega texto, imagenes o formas desde el panel izquierdo.</p>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ============ STATUS BAR ============ -->
+  <footer class="statusbar">
+    <span class="status-left" id="statusLeft">codeateJD Studio v1.3 · © 2026 codeateJD · Todos los derechos reservados</span>
+    <span class="status-center" id="statusCenter"></span>
+    <span class="status-right" id="statusRight">Listo</span>
+  </footer>
+
+</div>
+
+<!-- ============ PDF MODAL ============ -->
+<div class="pdf-modal" id="pdfModal" role="dialog" aria-modal="true" aria-labelledby="pdfModalTitle">
+  <div class="pdf-modal-backdrop" id="pdfModalBackdrop"></div>
+  <div class="pdf-modal-panel">
+    <div class="pdf-modal-header">
+      <div class="pdf-modal-title" id="pdfModalTitle">
+        <span class="dot"></span>
+        <span>Herramientas PDF</span>
+      </div>
+      <button class="pdf-modal-close" id="pdfModalClose" aria-label="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="pdf-tabs" role="tablist">
+      <button class="pdf-tab active" data-tab="pdf" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        PDF a Imagen <span class="tsi-badge" style="margin-left:4px">Pro</span>
+      </button>
+      <button class="pdf-tab" data-tab="split" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+        Separar <span class="tsi-badge" style="margin-left:4px">Pro</span>
+      </button>
+      <button class="pdf-tab" data-tab="merge" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Unir <span class="tsi-badge" style="margin-left:4px">Pro</span>
+      </button>
+      <button class="pdf-tab" data-tab="organize" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Organizar
+      </button>
+      <button class="pdf-tab" data-tab="annotate" role="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Anotar
+      </button>
+    </div>
+
+    <div class="pdf-panels">
+      <!-- PDF TO IMAGE -->
+      <div class="pdf-panel active" id="panel-pdf">
+        <h2>PDF a Imagen</h2>
+        <p class="desc">Sube un PDF y convierte cada pagina en una imagen JPG o PNG de alta calidad.</p>
+
+        <div class="upload-zone" id="pdf-upload">
+          <div class="icon">&#128196;</div>
+          <h3>Arrastra tu PDF aqui</h3>
+          <p>o haz clic para seleccionar archivo</p>
+          <input type="file" accept=".pdf" id="pdf-input">
+        </div>
+
+        <div class="options" id="pdf-options">
+          <h3>Opciones</h3>
+          <div class="opt-row">
+            <span class="opt-label">Formato</span>
+            <select id="pdf-format">
+              <option value="png">PNG (sin perdida)</option>
+              <option value="jpeg" selected>JPG (mas ligero)</option>
+            </select>
+          </div>
+          <div class="opt-row">
+            <span class="opt-label">Calidad</span>
+            <input type="number" id="pdf-quality" value="92" min="10" max="100">
+            <span style="font-size:11px;color:var(--text-3)">10-100</span>
+          </div>
+          <div class="opt-row">
+            <span class="opt-label">Escala</span>
+            <select id="pdf-scale">
+              <option value="1">1x (72 DPI)</option>
+              <option value="2" selected>2x (144 DPI)</option>
+              <option value="3">3x (216 DPI)</option>
+              <option value="4">4x (288 DPI)</option>
+            </select>
+          </div>
+          <div class="actions">
+            <button class="pdf-btn pdf-btn-primary" id="pdf-convert">Convertir</button>
+            <button class="pdf-btn pdf-btn-secondary" id="pdf-reset">Nuevo PDF</button>
+          </div>
+        </div>
+
+        <div class="progress-bar" id="pdf-progress"><div class="progress-fill" id="pdf-progress-fill"></div></div>
+        <div class="status" id="pdf-status"></div>
+
+        <div class="results" id="pdf-results">
+          <h3>Paginas convertidas</h3>
+          <div class="results-grid" id="pdf-results-grid"></div>
+          <div class="download-all">
+            <button class="pdf-btn pdf-btn-primary" id="pdf-download-all">Descargar todo (.zip)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SPLIT -->
+      <div class="pdf-panel" id="panel-split">
+        <h2>Separar PDF</h2>
+        <p class="desc">Sube un PDF y selecciona las paginas que quieres extraer en un nuevo archivo PDF.</p>
+
+        <div class="upload-zone" id="split-upload">
+          <div class="icon">&#9986;</div>
+          <h3>Arrastra tu PDF aqui</h3>
+          <p>o haz clic para seleccionar archivo</p>
+          <input type="file" accept=".pdf" id="split-input">
+        </div>
+
+        <div class="options" id="split-options">
+          <h3 id="split-info"></h3>
+          <div class="page-actions">
+            <button id="split-select-all">Todas</button>
+            <button id="split-select-none">Ninguna</button>
+            <button id="split-select-odd">Impares</button>
+            <button id="split-select-even">Pares</button>
+          </div>
+          <div class="page-selector" id="split-pages"></div>
+          <div class="opt-row">
+            <span class="opt-label">Modo</span>
+            <select id="split-mode">
+              <option value="single">Un PDF con paginas seleccionadas</option>
+              <option value="individual">Un PDF por cada pagina</option>
+            </select>
+          </div>
+          <div class="actions">
+            <button class="pdf-btn pdf-btn-primary" id="split-go">Separar</button>
+            <button class="pdf-btn pdf-btn-secondary" id="split-reset">Nuevo PDF</button>
+          </div>
+        </div>
+
+        <div class="progress-bar" id="split-progress"><div class="progress-fill" id="split-progress-fill"></div></div>
+        <div class="status" id="split-status"></div>
+      </div>
+
+      <!-- MERGE -->
+      <div class="pdf-panel" id="panel-merge">
+        <h2>Unir PDF</h2>
+        <p class="desc">Sube varios archivos PDF y combinalos en un solo documento. Puedes reordenarlos antes de unir.</p>
+
+        <div class="upload-zone" id="merge-upload">
+          <div class="icon">&#128279;</div>
+          <h3>Arrastra tus PDFs aqui</h3>
+          <p>Selecciona varios archivos PDF</p>
+          <input type="file" accept=".pdf" multiple id="merge-input">
+        </div>
+
+        <div class="merge-list" id="merge-list"></div>
+        <div class="batch-info" id="merge-batch-info"></div>
+
+        <div class="actions" id="merge-actions" style="display:none">
+          <button class="pdf-btn pdf-btn-primary" id="merge-go">Unir PDFs</button>
+          <button class="pdf-btn pdf-btn-secondary" id="merge-add">Agregar mas</button>
+          <button class="pdf-btn pdf-btn-secondary" id="merge-reset">Limpiar todo</button>
+        </div>
+
+        <div class="progress-bar" id="merge-progress"><div class="progress-fill" id="merge-progress-fill"></div></div>
+        <div class="status" id="merge-status"></div>
+      </div>
+
+      <!-- ORGANIZE (reorder/rotate/delete pages) -->
+      <div class="pdf-panel" id="panel-organize">
+        <h2>Organizar páginas</h2>
+        <p class="desc">Reordena, rota y elimina páginas de tu PDF. Visualiza cada página y descarga el resultado.</p>
+
+        <div class="upload-zone" id="edit-upload">
+          <div class="icon">&#128221;</div>
+          <h3>Arrastra tu PDF aqui</h3>
+          <p>o haz clic para seleccionar archivo</p>
+          <input type="file" accept=".pdf" id="edit-input">
+        </div>
+
+        <div class="options" id="edit-options">
+          <h3 id="edit-info"></h3>
+          <p style="font-size:11px;color:var(--text-3);margin-bottom:14px">
+            &#8592; &#8594; Mover &nbsp; &#8635; Rotar 90° &nbsp; &#10005; Eliminar
+          </p>
+          <div class="edit-pages" id="edit-pages"></div>
+          <div class="actions">
+            <button class="pdf-btn pdf-btn-primary" id="edit-save">Guardar PDF</button>
+            <button class="pdf-btn pdf-btn-secondary" id="edit-reset">Nuevo PDF</button>
+          </div>
+        </div>
+
+        <div class="status" id="edit-status"></div>
+      </div>
+
+      <!-- ANNOTATE (text, draw, highlight, sign, image) -->
+      <div class="pdf-panel" id="panel-annotate">
+        <h2>Anotar PDF</h2>
+        <p class="desc">Escribe, dibuja, tacha, resalta y firma sobre cualquier PDF. Guarda con las anotaciones aplicadas.</p>
+
+        <div class="upload-zone" id="ann-upload">
+          <div class="icon">&#9999;&#65039;</div>
+          <h3>Arrastra tu PDF aqui</h3>
+          <p>o haz clic para seleccionar archivo</p>
+          <input type="file" accept=".pdf" id="ann-input">
+        </div>
+
+        <div class="ann-editor" id="ann-editor">
+          <div class="ann-toolbar">
+            <button class="ann-tool active" data-ann="select" title="Seleccionar / Mover">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 17.39 2.51-7.11 7.11-2.51L3 3z"/></svg>
+            </button>
+            <button class="ann-tool" data-ann="text" title="Texto">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            </button>
+            <button class="ann-tool" data-ann="cover" title="Tachar (rectángulo blanco)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="8"/></svg>
+            </button>
+            <button class="ann-tool" data-ann="highlight" title="Resaltar (amarillo)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l-6 6v3h3l6-6"/><path d="M14 6l4 4"/><path d="M12 8l6-6 4 4-6 6"/></svg>
+            </button>
+            <button class="ann-tool" data-ann="draw" title="Dibujar a mano">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+            </button>
+            <button class="ann-tool" data-ann="image" title="Insertar imagen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            </button>
+            <button class="ann-tool" data-ann="sign" title="Firma">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17v4h4L19 9l-4-4L3 17z"/><path d="M14 6l4 4"/></svg>
+            </button>
+            <span class="ann-sep"></span>
+            <button class="ann-tool" id="ann-delete" title="Eliminar seleccionado">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            </button>
+            <span class="ann-sep"></span>
+            <input type="color" id="ann-color" value="#ef4444" title="Color de texto/dibujo">
+            <span class="ann-sep"></span>
+            <button class="pdf-btn pdf-btn-primary" id="ann-save" style="margin-left:auto">Guardar PDF</button>
+            <button class="pdf-btn pdf-btn-secondary" id="ann-reset">Nuevo</button>
+          </div>
+
+          <div class="ann-nav">
+            <button id="ann-prev" class="ann-nav-btn">&#8592; Anterior</button>
+            <span id="ann-page-info">Página 1 / 1</span>
+            <button id="ann-next" class="ann-nav-btn">Siguiente &#8594;</button>
+          </div>
+
+          <div class="ann-canvas-area" id="ann-canvas-area">
+            <div class="ann-canvas-wrapper" id="ann-canvas-wrapper">
+              <canvas id="ann-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="status" id="ann-status"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ AUTH MODAL (login / register) ============ -->
+<div class="auth-overlay" id="authModal">
+  <div class="auth-modal">
+    <div class="auth-brand">codeate<span class="grad">JD</span> <strong>Studio</strong></div>
+    <p class="auth-sub">Accede o crea tu cuenta para empezar a editar.</p>
+
+    <button class="auth-google" onclick="submitGoogleLogin()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.84 2.08-1.79 2.72v2.26h2.9c1.7-1.56 2.69-3.87 2.69-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.81.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.96 10.7A5.4 5.4 0 0 1 3.68 9c0-.59.1-1.16.28-1.7V4.96H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.04l3-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.45 1.35l2.58-2.58A8.96 8.96 0 0 0 9 0 9 9 0 0 0 .96 4.96l3 2.34C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      <span>Continuar con Google</span>
+    </button>
+    <div class="auth-divider"><span>o con email</span></div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-auth-tab="login" onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab" data-auth-tab="register" onclick="switchAuthTab('register')">Crear cuenta</button>
+    </div>
+
+    <div class="auth-form" id="authLoginForm">
+      <input id="authLoginEmail" type="email" placeholder="Email" autocomplete="email">
+      <input id="authLoginPass" type="password" placeholder="Contraseña" autocomplete="current-password">
+      <button class="auth-submit" onclick="submitLogin()">Entrar</button>
+      <div class="auth-error" id="authLoginError"></div>
+    </div>
+
+    <div class="auth-form" id="authRegisterForm" style="display:none">
+      <input id="authRegName" placeholder="Tu nombre">
+      <input id="authRegEmail" type="email" placeholder="Email" autocomplete="email">
+      <input id="authRegPass" type="password" placeholder="Contraseña (mín 6 caracteres)" autocomplete="new-password">
+      <button class="auth-submit" onclick="submitRegister()">Crear cuenta gratis</button>
+      <div class="auth-error" id="authRegError"></div>
+      <p class="auth-foot">Al crear cuenta aceptas usar Studio bajo nuestros términos. Plan Free de inicio, sin tarjeta.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ UPGRADE MODAL ============ -->
+<div class="upg-overlay" id="upgradeModal">
+  <div class="upg-modal">
+    <button class="upg-close" onclick="closeUpgradeModal()">×</button>
+    <h2 class="upg-title">Hazte Pro</h2>
+    <p class="upg-subtitle" id="upgradeSubtitle">Desbloquea todo Studio sin límites.</p>
+
+    <div class="upg-plans">
+      <div class="upg-plan active" data-plan="pro_monthly" onclick="selectUpgradePlan('pro_monthly')">
+        <div class="upg-plan-name">Pro Mensual</div>
+        <div class="upg-plan-price">$4.99<span>/mes</span></div>
+        <div class="upg-plan-tag">Lanzamiento</div>
+      </div>
+      <div class="upg-plan" data-plan="pro_yearly" onclick="selectUpgradePlan('pro_yearly')">
+        <div class="upg-plan-name">Pro Anual</div>
+        <div class="upg-plan-price">$49.99<span>/año</span></div>
+        <div class="upg-plan-tag">Mejor valor</div>
+      </div>
+    </div>
+
+    <div class="upg-methods">
+      <button class="upg-method active" data-method="usdt_trc20" onclick="selectUpgradeMethod('usdt_trc20')">USDT TRC-20</button>
+      <button class="upg-method" data-method="zinli" onclick="selectUpgradeMethod('zinli')">Zinli</button>
+    </div>
+
+    <div class="upg-pay" id="upgPayInfo"></div>
+
+    <button class="upg-submit" id="upgSubmitBtn" onclick="submitUpgrade()">Confirmar pago</button>
+    <p class="upg-foot">Tu plan se activará en cuanto verifiquemos el pago (normalmente &lt; 24h).</p>
+  </div>
+</div>
+
+<!-- Auth modal estilos inline (componente aislado) -->
+<style>
+  .auth-overlay, .upg-overlay {
+    position: fixed; inset: 0; background: rgba(8,12,24,0.85); backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center; z-index: 9999;
+  }
+  .auth-overlay.open, .upg-overlay.open { display: flex; }
+
+  .auth-modal {
+    background: #0f172a; border: 1px solid #334155; border-radius: 20px;
+    padding: 32px; width: 380px; max-width: 92vw; color: #e2e8f0; font-family: 'Inter', sans-serif;
+  }
+  .auth-brand { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .auth-brand .grad { background: linear-gradient(135deg, #38bdf8, #a78bfa); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .auth-sub { color: #94a3b8; font-size: 13px; margin-bottom: 20px; }
+  .auth-google { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px; background: #fff; color: #3c4043; border: 1px solid #dadce0; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; margin-bottom: 14px; transition: background 0.2s; }
+  .auth-google:hover { background: #f8f9fa; }
+  .auth-divider { text-align: center; color: #475569; font-size: 11px; margin: 14px 0; position: relative; text-transform: uppercase; letter-spacing: 1px; }
+  .auth-divider::before, .auth-divider::after { content: ''; position: absolute; top: 50%; width: 35%; height: 1px; background: #334155; }
+  .auth-divider::before { left: 0; }
+  .auth-divider::after { right: 0; }
+  .auth-divider span { background: #0f172a; padding: 0 8px; }
+  .auth-tabs { display: flex; gap: 4px; background: #1e293b; padding: 4px; border-radius: 10px; margin-bottom: 18px; }
+  .auth-tab { flex: 1; padding: 8px; border: none; background: transparent; color: #94a3b8; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 13px; }
+  .auth-tab.active { background: #38bdf8; color: #0f172a; }
+  .auth-form input { width: 100%; padding: 12px 14px; margin-bottom: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 10px; color: #e2e8f0; font-size: 14px; font-family: inherit; }
+  .auth-form input:focus { outline: none; border-color: #38bdf8; }
+  .auth-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #38bdf8, #a78bfa); border: none; border-radius: 10px; color: #0f172a; font-weight: 700; font-size: 14px; cursor: pointer; margin-top: 4px; }
+  .auth-submit:hover { opacity: 0.9; }
+  .auth-error { color: #f87171; font-size: 12px; min-height: 16px; margin-top: 8px; }
+  .auth-foot { color: #64748b; font-size: 11px; margin-top: 12px; line-height: 1.5; }
+
+  /* Upgrade modal */
+  .upg-modal {
+    background: #0f172a; border: 1px solid #334155; border-radius: 20px;
+    padding: 28px; width: 480px; max-width: 92vw; color: #e2e8f0; font-family: 'Inter', sans-serif; position: relative;
+  }
+  .upg-close { position: absolute; top: 14px; right: 14px; width: 32px; height: 32px; border-radius: 8px; border: none; background: #1e293b; color: #94a3b8; font-size: 20px; cursor: pointer; }
+  .upg-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .upg-subtitle { color: #94a3b8; font-size: 13px; margin-bottom: 18px; }
+  .upg-plans { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .upg-plan { background: #1e293b; border: 2px solid #334155; border-radius: 12px; padding: 14px; cursor: pointer; transition: all 0.2s; }
+  .upg-plan.active { border-color: #38bdf8; background: rgba(56,189,248,0.1); }
+  .upg-plan-name { font-size: 13px; color: #94a3b8; font-weight: 600; }
+  .upg-plan-price { font-size: 24px; font-weight: 800; margin: 4px 0; }
+  .upg-plan-price span { font-size: 12px; color: #64748b; font-weight: 500; }
+  .upg-plan-tag { font-size: 10px; color: #4ade80; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .upg-methods { display: flex; gap: 8px; margin-bottom: 14px; }
+  .upg-method { flex: 1; padding: 10px; background: #1e293b; border: 1px solid #334155; color: #94a3b8; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 13px; }
+  .upg-method.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+  .upg-pay { background: #1e293b; border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+  .upg-pay-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .upg-pay-label { color: #94a3b8; font-size: 12px; font-weight: 600; }
+  .upg-pay-amount { color: #4ade80; font-size: 16px; font-weight: 800; margin-left: auto; }
+  .upg-pay-addr { font-family: 'JetBrains Mono', monospace; background: #0f172a; padding: 4px 8px; border-radius: 6px; font-size: 11px; flex: 1; word-break: break-all; }
+  .upg-copy-btn { padding: 4px 10px; background: #38bdf8; color: #0f172a; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
+  .upg-pay-note { color: #94a3b8; font-size: 11px; margin: 8px 0; line-height: 1.4; }
+  .upg-pay-input label { display: block; color: #94a3b8; font-size: 11px; font-weight: 600; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .upg-pay-input input { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #e2e8f0; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  .upg-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #38bdf8, #a78bfa); border: none; border-radius: 10px; color: #0f172a; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .upg-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+  .upg-foot { color: #64748b; font-size: 11px; text-align: center; margin-top: 10px; }
+
+  /* User badge en topbar */
+  .user-badge-wrap { display: flex; align-items: center; gap: 8px; margin-left: 10px; padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.1); }
+  .user-plan-badge { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+  .user-plan-badge.free { background: rgba(148,163,184,0.2); color: #cbd5e1; }
+  .user-plan-badge.pro { background: linear-gradient(135deg, #38bdf8, #a78bfa); color: #0f172a; }
+  .user-email { color: #94a3b8; font-size: 12px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .user-upgrade-btn { padding: 4px 10px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border: none; border-radius: 6px; color: #0f172a; font-weight: 700; font-size: 11px; cursor: pointer; }
+  .user-logout-btn { width: 24px; height: 24px; border-radius: 6px; background: transparent; border: 1px solid rgba(255,255,255,0.1); color: #94a3b8; cursor: pointer; font-size: 12px; }
+  .user-btn { padding: 6px 12px; background: #38bdf8; color: #0f172a; border: none; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; }
+</style>
+
+<!-- Firebase Auth (compat — sin build) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/formats.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/tools-menu.js"></script>
+<script src="js/active-color.js"></script>
+<script src="js/crop.js"></script>
+<script src="js/eraser.js"></script>
+<script src="js/lasso-wand.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/properties.js"></script>
+<script src="js/events.js"></script>
+<script src="js/app.js"></script>
+<script src="js/pdf.js"></script>
+<script src="js/pdf-annotate.js"></script>
+<script src="js/upgrade.js"></script>
+<script src="js/auth.js"></script>
+
+<script>
+  // ── Auth modal handlers (inline para reusar DOM nativo) ──
+  function switchAuthTab(tab) {
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('active', t.dataset.authTab === tab));
+    document.getElementById('authLoginForm').style.display = (tab === 'login') ? '' : 'none';
+    document.getElementById('authRegisterForm').style.display = (tab === 'register') ? '' : 'none';
+  }
+  async function submitGoogleLogin() {
+    const errLogin = document.getElementById('authLoginError');
+    const errReg = document.getElementById('authRegError');
+    if (errLogin) errLogin.textContent = '';
+    if (errReg) errReg.textContent = '';
+    try { await doGoogleLogin(); }
+    catch (e) {
+      const msg = e.code === 'auth/popup-closed-by-user' ? 'Ventana cerrada antes de completar' : e.message;
+      if (errLogin) errLogin.textContent = msg;
+    }
+  }
+  async function submitLogin() {
+    const email = document.getElementById('authLoginEmail').value.trim();
+    const pass = document.getElementById('authLoginPass').value;
+    const err = document.getElementById('authLoginError');
+    err.textContent = '';
+    if (!email || !pass) { err.textContent = 'Completa email y contraseña'; return; }
+    try { await doLogin(email, pass); }
+    catch (e) { err.textContent = e.code === 'auth/invalid-credential' ? 'Email o contraseña incorrectos' : e.message; }
+  }
+  async function submitRegister() {
+    const name = document.getElementById('authRegName').value.trim();
+    const email = document.getElementById('authRegEmail').value.trim();
+    const pass = document.getElementById('authRegPass').value;
+    const err = document.getElementById('authRegError');
+    err.textContent = '';
+    if (!name || !email || !pass) { err.textContent = 'Completa todos los campos'; return; }
+    if (pass.length < 6) { err.textContent = 'La contraseña debe tener al menos 6 caracteres'; return; }
+    try { await doRegister(email, pass, name); }
+    catch (e) { err.textContent = e.message; }
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bluebg" x1="0" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0f1b2d"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f5576c"/>
+      <stop offset="100%" stop-color="#667eea"/>
+    </linearGradient>
+  </defs>
+  <!-- Fondo azul icono -->
+  <rect width="200" height="200" fill="url(#bluebg)"/>
+  <!-- Linea accent abajo -->
+  <rect x="16" y="188" width="168" height="3" rx="1.5" fill="url(#accent)" opacity="0.7"/>
+  <!-- >JD solo -->
+  <text x="100" y="135" text-anchor="middle" font-family="'Inter', 'Arial', sans-serif" font-size="88" font-weight="900"><tspan fill="#4ade80">&gt;</tspan><tspan fill="#ffffff">JD</tspan></text>
+</svg>
