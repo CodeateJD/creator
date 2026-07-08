@@ -1,7 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
    codeateJD Studio — auth.js
-   Firebase Auth (email+password) + conexión con backend Licencias.
-   Flujo: login/register → idToken → Authorization: Bearer → backend valida.
+   Firebase Auth (Google) + plan leído DIRECTO de Firestore (sin backend).
+   Flujo: login Google → se asegura el doc studio_users → se lee currentPlan.
+   El plan lo asigna el admin desde /creator/studio-admin/ (reglas de Firestore
+   garantizan que solo el admin puede cambiar planes).
    ═══════════════════════════════════════════════════════════════ */
 
 // ── Firebase config ──
@@ -19,6 +21,7 @@ const FIREBASE_CONFIG = {
 
 let firebaseApp = null;
 let firebaseAuth = null;
+let firebaseDb = null;
 
 function initFirebaseAuth() {
   if (!window.firebase || !window.firebase.initializeApp) {
@@ -31,6 +34,7 @@ function initFirebaseAuth() {
   }
   firebaseApp = firebase.initializeApp(FIREBASE_CONFIG);
   firebaseAuth = firebase.auth();
+  firebaseDb = firebase.firestore();
   firebaseAuth.onAuthStateChanged(handleAuthChange);
 
   // Procesa el resultado del redirect (Google sign-in con signInWithRedirect)
@@ -71,45 +75,59 @@ async function apiLogin() {
   return data;
 }
 
-async function apiEnsure() {
-  if (!firebaseAuth || !firebaseAuth.currentUser) return null;
-  const token = await firebaseAuth.currentUser.getIdToken();
-  const res = await fetch(`${STUDIO_API}/api/studio/ensure`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-  return res.json();
+// Asegura el doc del usuario en Firestore (idempotente). Primer login Google → crea Free.
+// Las reglas de Firestore exigen que al crearlo, currentPlan sea 'free'.
+async function ensureUserDoc() {
+  const u = firebaseAuth.currentUser;
+  if (!u || !firebaseDb) return;
+  const ref = firebaseDb.collection('studio_users').doc(u.uid);
+  const snap = await ref.get();
+  if (!snap.exists) {
+    await ref.set({
+      uid: u.uid,
+      email: u.email,
+      displayName: u.displayName || (u.email || '').split('@')[0],
+      currentPlan: 'free',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+  }
 }
 
-async function apiVerify() {
-  if (!firebaseAuth || !firebaseAuth.currentUser) return { valid: false };
-  const token = await firebaseAuth.currentUser.getIdToken();
-  const res = await fetch(`${STUDIO_API}/api/studio/verify`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-  });
-  return res.json();
+// Lee el plan actual DIRECTO de Firestore (studio_users/{uid}). Aplica vencimiento.
+async function readPlan() {
+  const u = firebaseAuth.currentUser;
+  if (!u || !firebaseDb) return { plan: 'free', expiresAt: null };
+  const snap = await firebaseDb.collection('studio_users').doc(u.uid).get();
+  if (!snap.exists) return { plan: 'free', expiresAt: null };
+  const d = snap.data() || {};
+  let plan = d.currentPlan || 'free';
+  let expiresAt = d.planExpiresAt || null;
+  if (plan !== 'free' && expiresAt) {
+    const exp = expiresAt.toDate ? expiresAt.toDate() : new Date(expiresAt);
+    if (exp < new Date()) { plan = 'free'; expiresAt = null; } // vencido → Free
+  }
+  return { plan, expiresAt };
 }
 
+// Solicitud de suscripción: crea una licencia 'pending' en Firestore (el admin la aprueba).
 async function apiSubscribe(plan, paymentMethod, txHash, amount) {
-  const token = await firebaseAuth.currentUser.getIdToken();
-  const res = await fetch(`${STUDIO_API}/api/studio/subscribe`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
-    body: JSON.stringify({ plan, paymentMethod, txHash, amount }),
+  const u = firebaseAuth.currentUser;
+  if (!u || !firebaseDb) throw new Error('Sesión no iniciada');
+  const licenseId = 'STU-' + (u.uid.slice(0, 6) + Date.now().toString(36)).toUpperCase();
+  await firebaseDb.collection('studio_licenses').doc(licenseId).set({
+    licenseId,
+    uid: u.uid,
+    email: u.email,
+    plan,
+    status: 'pending',
+    paymentMethod: paymentMethod || null,
+    txHash: txHash || null,
+    amount: amount || null,
+    expiresAt: null,
+    approvedAt: null,
+    requestedAt: firebase.firestore.FieldValue.serverTimestamp(),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Error en suscripción');
-  return data;
+  return { success: true, licenseId, message: 'Solicitud recibida. Se activará al confirmar el pago.' };
 }
 
 // ── Flujo principal ──
@@ -117,17 +135,14 @@ async function apiSubscribe(plan, paymentMethod, txHash, amount) {
 async function handleAuthChange(user) {
   if (user) {
     state.user = { uid: user.uid, email: user.email, displayName: user.displayName || user.email };
-    // ensure crea doc + Free si no existen (idempotente — primer login Google o email viejo)
-    try { await apiEnsure(); } catch (err) { console.warn('[auth] ensure falló:', err.message); }
-    // Llamar verify para obtener plan actual
+    // Asegura el doc (Free si es primer login) y lee el plan directo de Firestore.
+    try { await ensureUserDoc(); } catch (err) { console.warn('[auth] ensure falló:', err.message); }
     try {
-      const verify = await apiVerify();
-      if (verify.valid) {
-        state.userPlan = verify.plan || 'free';
-        state.planExpiresAt = verify.expiresAt || null;
-      }
+      const p = await readPlan();
+      state.userPlan = p.plan;
+      state.planExpiresAt = p.expiresAt;
     } catch (err) {
-      console.warn('[auth] verify falló:', err.message);
+      console.warn('[auth] readPlan falló:', err.message);
       state.userPlan = 'free';
     }
     // Actualizar UI
@@ -166,12 +181,10 @@ async function doLogout() {
 
 async function refreshPlan() {
   try {
-    const verify = await apiVerify();
-    if (verify.valid) {
-      state.userPlan = verify.plan || 'free';
-      state.planExpiresAt = verify.expiresAt || null;
-      if (typeof renderUserBadge === 'function') renderUserBadge();
-    }
+    const p = await readPlan();
+    state.userPlan = p.plan;
+    state.planExpiresAt = p.expiresAt;
+    if (typeof renderUserBadge === 'function') renderUserBadge();
   } catch (err) {
     console.warn('[auth] refreshPlan:', err.message);
   }
