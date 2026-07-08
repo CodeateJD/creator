@@ -150,7 +150,15 @@ function onAuth(user) {
 
 function login() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithRedirect(provider);
+  provider.setCustomParameters({ prompt: 'select_account' });
+  // Popup = más confiable que redirect en la web (evita el handler/init.json).
+  auth.signInWithPopup(provider).catch(e => {
+    if (['auth/popup-blocked','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment','auth/popup-closed-by-user'].includes(e.code)) {
+      if (e.code !== 'auth/popup-closed-by-user') auth.signInWithRedirect(provider);
+    } else {
+      toast('No se pudo entrar: ' + e.message, true);
+    }
+  });
 }
 function logout() { auth.signOut(); }
 
