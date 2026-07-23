@@ -15,6 +15,9 @@ const TEMPLATES = [
   { id: 'web-seo',    name: 'Página Web',   desc: 'Web que genera clientes. Futurista tech',   gradient: 'linear-gradient(135deg, #030524, #0a1a5c 60%, #00d4ff)' },
   { id: 'seo-local',  name: 'SEO Local',    desc: 'Aparece en Google cuando te buscan',        gradient: 'linear-gradient(135deg, #0a0e27, #0f2b4d 55%, #39ff14)' },
   { id: 'tech-pro',   name: 'Tech Pro',     desc: 'Servicio premium con estilo cyberpunk',     gradient: 'linear-gradient(135deg, #0d0018, #3a0066 55%, #ff00d4)' },
+  { id: 'code-pro',   name: 'Código Pro',    desc: 'Ventana de editor estilo Mac, código limpio',   gradient: 'linear-gradient(135deg, #0b1020, #1e293b 60%, #38bdf8)', category: 'programacion' },
+  { id: 'dev-hero',   name: 'Software Pro',  desc: 'Hacemos tu sistema realidad — hero de venta',    gradient: 'linear-gradient(135deg, #0a0620, #241056 55%, #8b5cf6)', category: 'programacion' },
+  { id: 'no-wp',      name: 'NO a WordPress',desc: 'Diferenciador: sistemas a la medida',            gradient: 'linear-gradient(135deg, #1a0510, #4a0e2e 55%, #f43f5e)', category: 'programacion' },
 ];
 
 /* ══════════ VARIANTES COHERENTES POR TEMA ══════════
@@ -333,6 +336,9 @@ function loadTemplate(id, done) {
     'web-seo':    tpl_webSeo,
     'seo-local':  tpl_seoLocal,
     'tech-pro':   tpl_techPro,
+    'code-pro':   tpl_codePro,
+    'dev-hero':   tpl_devHero,
+    'no-wp':      tpl_noWp,
   };
   if (!fn[id]) return;
 
@@ -941,3 +947,226 @@ function tpl_techPro() {
     fontWeight: 700, fill: '#64748b',
   }));
 }
+
+/* ══════════ 12. CÓDIGO PRO (ventana editor premium) ══════════ */
+function tpl_codePro() {
+  setCanvasBgGradient('#0b1020', '#111c33', 135);
+
+  canvas.add(new fabric.IText('codeate>JD', {
+    left: 60, top: 55, fontSize: 24, fontFamily: 'Inter',
+    fontWeight: 800, fill: '#ffffff',
+  }));
+
+  // language badge (top-right)
+  canvas.add(new fabric.Rect({
+    left: 828, top: 50, width: 192, height: 44, rx: 22, ry: 22,
+    fill: 'rgba(56,189,248,0.12)', stroke: '#38bdf8', strokeWidth: 1.5,
+  }));
+  canvas.add(new fabric.IText('JavaScript', {
+    left: 856, top: 61, fontSize: 20, fontFamily: 'JetBrains Mono',
+    fontWeight: 700, fill: '#7dd3fc',
+    meta: { role: 'badge' },
+  }));
+
+  // title
+  canvas.add(new fabric.Textbox('async / await\nsin dolor', {
+    left: 60, top: 130, width: 940,
+    fontSize: 62, fontFamily: 'Inter',
+    fontWeight: 800, fill: '#ffffff', lineHeight: 1.05,
+    meta: { role: 'title' },
+  }));
+
+  // code window body
+  canvas.add(new fabric.Rect({
+    left: 60, top: 322, width: 960, height: 598, rx: 20, ry: 20,
+    fill: '#0d1526', stroke: 'rgba(56,189,248,0.30)', strokeWidth: 1.5,
+    shadow: new fabric.Shadow({ color: 'rgba(2,8,23,0.55)', blur: 40, offsetX: 0, offsetY: 18 }),
+  }));
+  // header bar
+  canvas.add(new fabric.Rect({
+    left: 60, top: 322, width: 960, height: 58, rx: 20, ry: 20,
+    fill: '#16233d',
+  }));
+  // traffic lights
+  canvas.add(new fabric.Circle({ left: 88,  top: 344, radius: 7, fill: '#ff5f56' }));
+  canvas.add(new fabric.Circle({ left: 112, top: 344, radius: 7, fill: '#ffbd2e' }));
+  canvas.add(new fabric.Circle({ left: 136, top: 344, radius: 7, fill: '#27c93f' }));
+  // filename
+  canvas.add(new fabric.IText('app.js', {
+    left: 176, top: 340, fontSize: 20, fontFamily: 'JetBrains Mono',
+    fontWeight: 500, fill: '#8aa0c6',
+    meta: { role: 'file' },
+  }));
+  // code
+  canvas.add(new fabric.Textbox('async function getUser(id) {\n  const res = await fetch(\n    `/api/users/${id}`\n  );\n  return res.json();\n}\n\nconst user = await getUser(42);', {
+    left: 96, top: 410, width: 890,
+    fontSize: 27, fontFamily: 'JetBrains Mono',
+    fontWeight: 400, fill: '#e2e8f0', lineHeight: 1.55,
+    meta: { role: 'code' },
+  }));
+
+  // footer accent + handle
+  canvas.add(new fabric.Rect({
+    left: 60, top: 952, width: 120, height: 5, rx: 2, ry: 2, fill: '#38bdf8',
+  }));
+  canvas.add(new fabric.IText('@codeatejd', {
+    left: 828, top: 984, fontSize: 20, fontFamily: 'Inter',
+    fontWeight: 700, fill: '#64748b',
+  }));
+}
+
+/* ══════════ 13. SOFTWARE PRO (hero codeateJD) ══════════ */
+function tpl_devHero() {
+  drawFuturisticBg({
+    bg1: '#0a0620', bg2: '#241056', angle: 150,
+    beam: '#8b5cf6', neon: '#22d3ee', particle: '#c4b5fd',
+  });
+
+  canvas.add(new fabric.IText('codeate>JD', {
+    left: 60, top: 55, fontSize: 24, fontFamily: 'Inter',
+    fontWeight: 800, fill: '#ffffff',
+  }));
+
+  canvas.add(new fabric.Textbox('Hacemos tu\nsistema realidad', {
+    left: 60, top: 210, width: 720,
+    fontSize: 78, fontFamily: 'Inter',
+    fontWeight: 900, fill: '#ffffff', lineHeight: 1.02,
+    shadow: new fabric.Shadow({ color: 'rgba(139,92,246,0.5)', blur: 20, offsetX: 0, offsetY: 0 }),
+    meta: { role: 'title' },
+  }));
+
+  canvas.add(new fabric.Textbox('Software a la medida para tu negocio.\nRápido, seguro y 100% tuyo.', {
+    left: 60, top: 410, width: 660,
+    fontSize: 24, fontFamily: 'Inter',
+    fontWeight: 500, fill: '#cbd5e1', lineHeight: 1.4,
+    meta: { role: 'sub' },
+  }));
+
+  // feature pills (App / Dashboard / SEO / SSL)
+  var feats = ['App', 'Dashboard', 'SEO', 'SSL'];
+  var fx = 60;
+  var fy = 540;
+  feats.forEach(function (f) {
+    var w = 48 + f.length * 15;
+    canvas.add(new fabric.Rect({
+      left: fx, top: fy, width: w, height: 54, rx: 27, ry: 27,
+      fill: 'rgba(34,211,238,0.10)', stroke: '#22d3ee', strokeWidth: 1.5,
+    }));
+    canvas.add(new fabric.IText(f, {
+      left: fx + 24, top: fy + 15, fontSize: 22, fontFamily: 'Inter',
+      fontWeight: 700, fill: '#7dd3fc',
+    }));
+    fx += w + 20;
+  });
+
+  // CTA
+  canvas.add(new fabric.Rect({
+    left: 60, top: 700, width: 400, height: 66, rx: 33, ry: 33,
+    fill: '#22d3ee',
+    shadow: new fabric.Shadow({ color: 'rgba(34,211,238,0.5)', blur: 18, offsetX: 0, offsetY: 6 }),
+  }));
+  canvas.add(new fabric.IText('Cotiza tu proyecto →', {
+    left: 92, top: 720, fontSize: 24, fontFamily: 'Inter',
+    fontWeight: 800, fill: '#06202a',
+    meta: { role: 'cta' },
+  }));
+
+  canvas.add(new fabric.IText('@codeatejd', {
+    left: 60, top: 990, fontSize: 18, fontFamily: 'Inter',
+    fontWeight: 700, fill: '#94a3b8',
+  }));
+  canvas.add(new fabric.IText('codeatejd.com', {
+    left: 828, top: 990, fontSize: 18, fontFamily: 'Inter',
+    fontWeight: 700, fill: '#94a3b8',
+  }));
+}
+
+/* ══════════ 14. NO A WORDPRESS (diferenciador) ══════════ */
+function tpl_noWp() {
+  drawFuturisticBg({
+    bg1: '#1a0510', bg2: '#4a0e2e', angle: 150,
+    beam: '#f43f5e', neon: '#fbbf24', particle: '#fda4af',
+  });
+
+  canvas.add(new fabric.IText('codeate>JD', {
+    left: 60, top: 55, fontSize: 24, fontFamily: 'Inter',
+    fontWeight: 800, fill: '#ffffff',
+  }));
+
+  canvas.add(new fabric.Textbox('NO a\nWordPress', {
+    left: 60, top: 180, width: 820,
+    fontSize: 92, fontFamily: 'Inter',
+    fontWeight: 900, fill: '#ffffff', lineHeight: 1.0,
+    shadow: new fabric.Shadow({ color: 'rgba(244,63,94,0.55)', blur: 22, offsetX: 0, offsetY: 0 }),
+    meta: { role: 'title' },
+  }));
+
+  canvas.add(new fabric.Textbox('Sistemas a la medida', {
+    left: 60, top: 420, width: 900,
+    fontSize: 46, fontFamily: 'Inter',
+    fontWeight: 800, fill: '#fbbf24', lineHeight: 1.05,
+    shadow: new fabric.Shadow({ color: 'rgba(251,191,36,0.5)', blur: 16, offsetX: 0, offsetY: 0 }),
+    meta: { role: 'highlight' },
+  }));
+
+  canvas.add(new fabric.Textbox('Más seguridad, más velocidad y control total.\nSin plantillas genéricas ni plugins que se rompen.', {
+    left: 60, top: 512, width: 720,
+    fontSize: 23, fontFamily: 'Inter',
+    fontWeight: 500, fill: '#f1e7ea', lineHeight: 1.4,
+    meta: { role: 'sub' },
+  }));
+
+  // reasons list
+  var reasons = ['Código propio, no plantillas', 'Seguridad SSL de verdad', 'Escala sin límites'];
+  var ry2 = 640;
+  reasons.forEach(function (r) {
+    canvas.add(new fabric.Circle({
+      left: 60, top: ry2 + 6, radius: 7, fill: '#fbbf24',
+      shadow: new fabric.Shadow({ color: '#fbbf24', blur: 10, offsetX: 0, offsetY: 0 }),
+    }));
+    canvas.add(new fabric.IText(r, {
+      left: 92, top: ry2 - 4, fontSize: 26, fontFamily: 'Inter',
+      fontWeight: 600, fill: '#ffffff',
+    }));
+    ry2 += 58;
+  });
+
+  canvas.add(new fabric.IText('Hacemos tu sistema realidad · @codeatejd', {
+    left: 60, top: 988, fontSize: 20, fontFamily: 'Inter',
+    fontWeight: 700, fill: '#fda4af',
+  }));
+}
+
+/* ── Variantes de las nuevas plantillas de Programación ── */
+TEMPLATE_VARIANTS['code-pro'] = [
+  { badge: 'JavaScript', file: 'app.js', title: 'async / await\nsin dolor',
+    code: 'async function getUser(id) {\n  const res = await fetch(\n    `/api/users/${id}`\n  );\n  return res.json();\n}\n\nconst user = await getUser(42);' },
+  { badge: 'TypeScript', file: 'types.ts', title: 'Tipos que\nte salvan',
+    code: 'type User = {\n  id: number;\n  name: string;\n  role: "admin" | "user";\n};\n\nconst isAdmin = (u) =>\n  u.role === "admin";' },
+  { badge: 'React', file: 'useToggle.js', title: 'Custom Hooks\nen 30s',
+    code: 'function useToggle(init) {\n  const [on, setOn] =\n    useState(init);\n  const toggle = () =>\n    setOn(v => !v);\n  return [on, toggle];\n}' },
+  { badge: 'Python', file: 'main.py', title: 'List comp\nque enamora',
+    code: 'nums = [1, 2, 3, 4, 5]\n\nsquares = [n*n for n in nums]\n# [1, 4, 9, 16, 25]\n\nevens = [n for n in nums\n         if n % 2 == 0]' },
+];
+
+TEMPLATE_VARIANTS['dev-hero'] = [
+  { title: 'Hacemos tu\nsistema realidad',
+    sub: 'Software a la medida para tu negocio.\nRápido, seguro y 100% tuyo.',
+    cta: 'Cotiza tu proyecto →' },
+  { title: 'Tu idea\nhecha software',
+    sub: 'Del prototipo a producción sin vueltas.\nApps, dashboards e integraciones.',
+    cta: 'Hablemos hoy →' },
+  { title: 'Menos manual,\nmás automático',
+    sub: 'Automatizamos lo repetitivo con sistemas\nque trabajan por ti 24/7.',
+    cta: 'Automatiza ya →' },
+];
+
+TEMPLATE_VARIANTS['no-wp'] = [
+  { title: 'NO a\nWordPress', highlight: 'Sistemas a la medida',
+    sub: 'Más seguridad, más velocidad y control total.\nSin plantillas genéricas ni plugins que se rompen.' },
+  { title: 'Cansado de\nplugins rotos', highlight: 'Cámbiate a medida',
+    sub: 'Tu sistema hecho para ti, no un molde reciclado.\nSeguridad SSL y velocidad real.' },
+  { title: 'Tu web\nmerece más', highlight: 'Desarrollo profesional',
+    sub: 'Código propio, escalable y seguro.\nHacemos tu sistema realidad.' },
+];
+
