@@ -16,7 +16,7 @@ const modal = document.getElementById('pdfModal');
 const modalBackdrop = document.getElementById('pdfModalBackdrop');
 const modalClose = document.getElementById('pdfModalClose');
 
-const PDF_PRO_TABS = ['pdf', 'split', 'merge'];
+const PDF_PRO_TABS = ['pdf', 'split', 'merge', 'ppt'];
 function openPdfModal(tab) {
   const t = tab || 'pdf';
   if (PDF_PRO_TABS.includes(t) && typeof isPro === 'function' && !isPro()) {
@@ -232,6 +232,97 @@ document.getElementById('pdf-convert').addEventListener('click', async () => {
 
 document.getElementById('pdf-download-all').addEventListener('click', () => {
   if (pdfResultItems.length) downloadZip(pdfResultItems, 'pdf-paginas.zip');
+});
+
+// ═══════════════════════ PDF TO POWERPOINT ═══════════════════════
+let pptFile = null;
+
+setupUpload('ppt-upload', 'ppt-input', files => {
+  pptFile = files[0];
+  if (!pptFile || !pptFile.name.toLowerCase().endsWith('.pdf')) {
+    alert('Por favor selecciona un archivo PDF');
+    return;
+  }
+  document.getElementById('ppt-upload').style.display = 'none';
+  document.getElementById('ppt-options').classList.add('visible');
+});
+
+document.getElementById('ppt-reset').addEventListener('click', () => {
+  pptFile = null;
+  document.getElementById('ppt-upload').style.display = '';
+  document.getElementById('ppt-options').classList.remove('visible');
+  document.getElementById('ppt-progress').classList.remove('visible');
+  document.getElementById('ppt-status').classList.remove('visible');
+  document.getElementById('ppt-input').value = '';
+});
+
+document.getElementById('ppt-convert').addEventListener('click', async () => {
+  if (!pptFile) return;
+  if (typeof isPro === 'function' && !isPro()) {
+    if (typeof showUpgradeModal === 'function') showUpgradeModal('pdf-ppt');
+    else alert('PDF a PowerPoint es una feature Pro');
+    return;
+  }
+  if (typeof PptxGenJS === 'undefined') {
+    alert('La libreria de PowerPoint no cargo. Revisa tu conexion e intenta de nuevo.');
+    return;
+  }
+  const scale = parseInt(document.getElementById('ppt-scale').value) || 2;
+
+  const btn = document.getElementById('ppt-convert');
+  btn.disabled = true;
+  btn.textContent = 'Convirtiendo...';
+
+  const progress = document.getElementById('ppt-progress');
+  const progressFill = document.getElementById('ppt-progress-fill');
+  const status = document.getElementById('ppt-status');
+  progress.classList.add('visible');
+  status.classList.add('visible');
+
+  try {
+    const arrayBuffer = await pptFile.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const totalPages = pdf.numPages;
+    status.textContent = `Procesando ${totalPages} paginas...`;
+
+    // Tamano de diapositiva a partir de la 1a pagina (72 pt = 1 pulgada)
+    const firstVp = (await pdf.getPage(1)).getViewport({ scale: 1 });
+    let wIn = firstVp.width / 72;
+    let hIn = firstVp.height / 72;
+    if (!(wIn > 0) || !(hIn > 0)) { wIn = 10; hIn = 7.5; }
+
+    const pptx = new PptxGenJS();
+    pptx.defineLayout({ name: 'PDFPAGE', width: wIn, height: hIn });
+    pptx.layout = 'PDFPAGE';
+
+    for (let i = 1; i <= totalPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale });
+      const c = document.createElement('canvas');
+      c.width = viewport.width;
+      c.height = viewport.height;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, c.width, c.height);
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      const dataUrl = c.toDataURL('image/jpeg', 0.85);
+      const slide = pptx.addSlide();
+      slide.addImage({ data: dataUrl, x: 0, y: 0, w: wIn, h: hIn });
+      progressFill.style.width = ((i / totalPages) * 100) + '%';
+      status.textContent = `Pagina ${i} de ${totalPages}`;
+    }
+
+    const outName = pptFile.name.replace(/\.pdf$/i, '') + '.pptx';
+    status.textContent = 'Generando PowerPoint...';
+    await pptx.writeFile({ fileName: outName });
+    status.textContent = `Listo — ${totalPages} diapositivas`;
+  } catch (err) {
+    status.textContent = 'Error: ' + err.message;
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Convertir a PPT';
 });
 
 // ═══════════════════════ SPLIT PDF ═══════════════════════
