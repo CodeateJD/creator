@@ -1058,7 +1058,7 @@ function templatePickerHTML() {
   const locked = !hasPlantillasAccess();
   const lockIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
-  const items = TEMPLATES.map(t => `
+  const cardHTML = t => `
     <button class="template-card ${state.currentTemplate === t.id ? 'active' : ''} ${locked ? 'locked' : ''}" data-tpl-id="${t.id}">
       <div class="template-thumb" style="background:${t.gradient}">
         <span class="template-thumb-label">${esc(t.name)}</span>
@@ -1069,6 +1069,24 @@ function templatePickerHTML() {
         <span>${esc(t.desc)}</span>
       </div>
     </button>
+  `;
+
+  // Agrupar plantillas por categoría (rubro). Los rubros nuevos (Medicina,
+  // Laboratorio, Diseño...) aparecerán solos cuando existan plantillas suyas.
+  const CAT_LABELS = { programacion: 'Programación', general: 'General' };
+  const CAT_ORDER = ['programacion', 'general'];
+  const PROG_IDS = ['code-tip', 'logos', 'web-seo', 'seo-local', 'tech-pro'];
+  const catOf = t => t.category || (PROG_IDS.indexOf(t.id) !== -1 ? 'programacion' : 'general');
+  const groups = {};
+  TEMPLATES.forEach(t => {
+    const c = catOf(t);
+    (groups[c] = groups[c] || []).push(t);
+  });
+  const cats = CAT_ORDER.filter(c => groups[c])
+    .concat(Object.keys(groups).filter(c => CAT_ORDER.indexOf(c) === -1));
+  const items = cats.map(c => `
+    <div class="template-cat-title" style="font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3,#94a3b8);margin:16px 4px 8px 4px">${esc(CAT_LABELS[c] || c)}</div>
+    <div class="template-grid">${groups[c].map(cardHTML).join('')}</div>
   `).join('');
 
   const upgradeBanner = locked ? `
@@ -1094,7 +1112,7 @@ function templatePickerHTML() {
       <div class="prop-section-title">Plantillas</div>
       ${headerText}
     </div>
-    <div class="template-grid">${items}</div>
+    <div class="template-list">${items}</div>
     ${upgradeBanner}
   `;
 }
