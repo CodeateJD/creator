@@ -114,6 +114,9 @@ window.refreshActiveColors = refreshSwatches;
 function updateProUI() {
   document.body.classList.toggle('is-pro', isPro());
   refreshSwatches();
+  // Re-evalua los locks de formato: al pasar a Pro quita la pildora 'PRO' (.fmt-lock)
+  // y el atenuado (.locked) de Story/LinkedIn/X, que si no quedaban pegados.
+  if (typeof refreshFormatLocks === 'function') refreshFormatLocks();
 }
 updateProUI();
 window.updateProUI = updateProUI;
