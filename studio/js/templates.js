@@ -339,6 +339,9 @@ function loadTemplate(id, done) {
     'code-pro':   tpl_codePro,
     'dev-hero':   tpl_devHero,
     'no-wp':      tpl_noWp,
+    // Paquetes de plantillas por rubro en archivos aparte (templates-auto.js
+    // y los que vengan). Se registran en window.TEMPLATE_FNS.
+    ...(window.TEMPLATE_FNS || {}),
   };
   if (!fn[id]) return;
 
@@ -346,6 +349,9 @@ function loadTemplate(id, done) {
     canvas.clear();
     fn[id]();
     state.currentTemplate = id;
+    // Se anota cuanto espacio ocupa cada texto ANTES de meter ninguna
+    // variante: ese es el presupuesto que no puede desbordar (auto-fit.js).
+    if (typeof capturarPresupuestoTexto === 'function') capturarPresupuestoTexto();
     applyVariantToCanvas(id);
     canvas.requestRenderAll();
     renderLayersPanel();
@@ -373,6 +379,10 @@ function applyVariantToCanvas(id) {
       if (typeof o.initDimensions === 'function') {
         try { o.initDimensions(); o.setCoords(); } catch (_) {}
       }
+      // Si el texto nuevo no cabe en el hueco que le dejo el diseno, se le
+      // baja la fuente hasta que quepa. Sin esto el titulo se monta sobre
+      // lo de abajo cuando la variante es mas larga.
+      if (typeof ajustarTextoAlPresupuesto === 'function') ajustarTextoAlPresupuesto(o);
       changed++;
     }
   });
