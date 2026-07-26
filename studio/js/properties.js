@@ -118,6 +118,13 @@ function renderPropsPanel(obj) {
     return;
   }
 
+  // Varios objetos seleccionados: panel propio con alinear, distribuir y unir
+  if (obj.type === 'activeSelection' && typeof selectionPropsHTML === 'function') {
+    container.innerHTML = selectionPropsHTML(obj);
+    if (typeof bindEditToolsEvents === 'function') bindEditToolsEvents(container, obj);
+    return;
+  }
+
   if (obj.type === 'i-text' || obj.type === 'text' || obj.type === 'textbox') {
     container.innerHTML = textPropsHTML(obj);
     bindPropsEvents(obj);
@@ -425,6 +432,9 @@ function genericPropsHTML(obj) {
 function bindPropsEvents(obj) {
   const container = $('#panelProps');
   if (!container) return;
+
+  // Bloque de edicion (edit-tools.js): alinear, separar y apariencia del texto
+  if (typeof injectEditTools === 'function') injectEditTools(container, obj);
 
   // Props directas (fill, fontFamily, fontSize, fontWeight, opacity, lineHeight, charSpacing)
   container.querySelectorAll('[data-prop]').forEach(el => {
@@ -784,9 +794,11 @@ function backgroundPanelHTML() {
       </button>
     </div>
 
+    ${typeof fondoAvanzadoHTML === 'function' ? fondoAvanzadoHTML() : ''}
+
     <div class="prop-section">
       <div class="prop-section-title">Restablecer</div>
-      <button class="action-btn action-danger" id="bgClear" style="width:100%">Quitar fondo</button>
+      <button class="action-btn action-danger" id="bgClear" style="width:100%">Quitar fondo (transparente)</button>
     </div>
   `;
 }
@@ -819,6 +831,9 @@ function bindBackgroundEvents() {
 
   $('#bgUploadImg')?.addEventListener('click', uploadBgImage);
   $('#bgClear')?.addEventListener('click', clearCanvasBg);
+
+  // Brillo, contraste y degradado propio (fondo-avanzado.js)
+  if (typeof bindFondoAvanzado === 'function') bindFondoAvanzado();
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1058,36 +1073,15 @@ function templatePickerHTML() {
   const locked = !hasPlantillasAccess();
   const lockIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
 
-  const cardHTML = t => `
-    <button class="template-card ${state.currentTemplate === t.id ? 'active' : ''} ${locked ? 'locked' : ''}" data-tpl-id="${t.id}">
-      <div class="template-thumb" style="background:${t.gradient}">
-        <span class="template-thumb-label">${esc(t.name)}</span>
-        ${locked ? `<span class="template-lock" title="Disponible solo en Pro">${lockIcon}<span>PRO</span></span>` : ''}
-      </div>
-      <div class="template-info">
-        <strong>${esc(t.name)}</strong>
-        <span>${esc(t.desc)}</span>
-      </div>
-    </button>
-  `;
-
-  // Agrupar plantillas por categoría (rubro). Los rubros nuevos (Medicina,
-  // Laboratorio, Diseño...) aparecerán solos cuando existan plantillas suyas.
-  const CAT_LABELS = { programacion: 'Programación', general: 'General' };
-  const CAT_ORDER = ['programacion', 'general'];
-  const PROG_IDS = ['code-tip', 'logos', 'web-seo', 'seo-local', 'tech-pro'];
-  const catOf = t => t.category || (PROG_IDS.indexOf(t.id) !== -1 ? 'programacion' : 'general');
-  const groups = {};
-  TEMPLATES.forEach(t => {
-    const c = catOf(t);
-    (groups[c] = groups[c] || []).push(t);
-  });
-  const cats = CAT_ORDER.filter(c => groups[c])
-    .concat(Object.keys(groups).filter(c => CAT_ORDER.indexOf(c) === -1));
-  const items = cats.map(c => `
-    <div class="template-cat-title" style="font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--text-3,#94a3b8);margin:16px 4px 8px 4px">${esc(CAT_LABELS[c] || c)}</div>
-    <div class="template-grid">${groups[c].map(cardHTML).join('')}</div>
-  `).join('');
+  // El catalogo completo ya NO se lista aqui: eso es el modal (tpl-modal.js),
+  // donde primero escoges tu rubro. En el panel solo queda el boton para
+  // abrirlo, la plantilla activa y tus plantillas guardadas.
+  const iconoRejilla = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>';
+  const botonModal = `
+    <button class="action-btn action-primary" id="tplAbrirModal" style="width:100%;margin-top:10px">
+      ${iconoRejilla}
+      Ver plantillas por rubro
+    </button>`;
 
   const upgradeBanner = locked ? `
     <div class="prop-section upgrade-banner">
@@ -1104,15 +1098,19 @@ function templatePickerHTML() {
   const poolSize = activeTpl && TEMPLATE_VARIANTS[activeTpl.id] ? TEMPLATE_VARIANTS[activeTpl.id].length : 0;
 
   const headerText = activeTpl
-    ? `<p class="hint-text"><strong>${esc(activeTpl.name)}</strong> activo — clic de nuevo para rotar entre ${poolSize} variantes.</p>`
-    : `<p class="hint-text">Elige un tema. Cada clic rota entre variantes del mismo tema.</p>`;
+    ? `<p class="hint-text"><strong>${esc(activeTpl.name)}</strong> activa${poolSize ? ` — vuelve a escogerla para rotar entre ${poolSize} variantes` : ''}.</p>`
+    : `<p class="hint-text">Escoge tu rubro y te muestro solo las plantillas que te sirven.</p>`;
+
+  // Seccion "Mis plantillas" (my-templates.js)
+  const misPlantillas = typeof myTemplatesSectionHTML === 'function' ? myTemplatesSectionHTML() : '';
 
   return `
     <div class="prop-section">
       <div class="prop-section-title">Plantillas</div>
       ${headerText}
+      ${botonModal}
     </div>
-    <div class="template-list">${items}</div>
+    ${misPlantillas}
     ${upgradeBanner}
   `;
 }
@@ -1226,4 +1224,10 @@ function bindTemplatePickerEvents() {
   });
 
   $('#tplUpgradeBtn')?.addEventListener('click', showUpgradeModal);
+
+  $('#tplAbrirModal')?.addEventListener('click', () => {
+    if (typeof openTemplateModal === 'function') openTemplateModal();
+  });
+
+  if (typeof bindMyTemplatesEvents === 'function') bindMyTemplatesEvents(refreshPicker);
 }
