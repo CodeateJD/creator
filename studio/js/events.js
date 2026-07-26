@@ -155,7 +155,16 @@ canvas.on('mouse:up', () => {
 });
 
 canvas.on('mouse:down', (opt) => {
-  if (opt.target) return;
+  // Solo actua en modo texto o forma.
+  if (state.tool !== 'text' && state.tool !== 'shape') return;
+  // Si se hizo clic sobre un texto que se esta editando, dejarlo editar.
+  if (opt.target && opt.target.isEditing) return;
+
+  // ⚠️ ANTES aqui habia `if (opt.target) return`: solo se podia colocar texto
+  // o forma en un HUECO VACIO del lienzo. En una plantilla que cubre todo
+  // (foto a sangre) no existe ese hueco → cada clic caia sobre un objeto y
+  // NO se agregaba nada. Ese era el "no me deja agregar capas". Ahora se
+  // coloca donde se hizo clic, haya algo debajo o no.
   const p = canvas.getPointer(opt.e);
   if (state.tool === 'text') {
     addTextAt(p.x, p.y);
