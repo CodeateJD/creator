@@ -171,19 +171,19 @@ async function doLogin(email, password) {
 async function doGoogleLogin() {
   const provider = new firebase.auth.GoogleAuthProvider();
   // Popup (no redirect): con authDomain en *.firebaseapp.com, signInWithRedirect NO
-  // completa la sesion en Chrome (particiona el storage de terceros) y devuelve al login.
-  // Popup si funciona en prod: es lo mismo que usa el panel studio-admin. handleAuthChange
-  // se dispara solo via onAuthStateChanged.
+  // completa la sesión en Chrome (particiona el storage de terceros) y devuelve al login.
+  // Popup sí funciona en prod — es lo mismo que usa el panel studio-admin. handleAuthChange
+  // se dispara solo vía onAuthStateChanged.
   try {
     await firebaseAuth.signInWithPopup(provider);
   } catch (err) {
-    if (err && err.code === "auth/popup-blocked") {
-      // Si el navegador bloquea el popup, caemos al redirect como ultimo recurso.
+    if (err && err.code === 'auth/popup-blocked') {
+      // Si el navegador bloquea el popup, caemos al redirect como último recurso.
       await firebaseAuth.signInWithRedirect(provider);
-    } else if (err && err.code !== "auth/popup-closed-by-user" &&
-               err.code !== "auth/cancelled-popup-request") {
-      console.warn("[auth] login Google fallo:", err.message);
-      alert("No se pudo iniciar sesion con Google: " + err.message);
+    } else if (err && err.code !== 'auth/popup-closed-by-user' &&
+               err.code !== 'auth/cancelled-popup-request') {
+      console.warn('[auth] login Google falló:', err.message);
+      alert('No se pudo iniciar sesión con Google: ' + err.message);
     }
   }
 }
