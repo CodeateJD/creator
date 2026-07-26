@@ -33,11 +33,19 @@ function downloadCanvas(format, multiplier, quality) {
     return true;
   }
 
+  // JPG no soporta transparencia: si el lienzo no tiene fondo saldria negro.
+  // Se le pone blanco solo para exportar y se devuelve como estaba.
+  const bgOriginal = canvas.backgroundColor;
+  const sinFondo = !bgOriginal;
+  if (format === 'jpeg' && sinFondo) canvas.setBackgroundColor('#ffffff', () => {});
+
   const dataURL = canvas.toDataURL({
     format: format,
     quality: quality || 1,
     multiplier: multiplier || 1,
   });
+
+  if (format === 'jpeg' && sinFondo) canvas.setBackgroundColor(bgOriginal || '', () => {});
 
   triggerDownload(dataURL, `${baseName}.${format}`);
   maybeDownloadPublishTxt(baseName);
