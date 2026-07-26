@@ -1,0 +1,202 @@
+/* ═══════════════════════════════════════════════════════════════
+   codeateJD Studio — edit-tools.css
+   Alinear / distribuir / unir / separar + apariencia del texto
+   + damero para el fondo transparente
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── fila de botones de alinear ── */
+.edit-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.edit-btn {
+  width: 32px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border, #2a3142);
+  border-radius: 6px;
+  background: var(--bg-2, #1a1f2e);
+  color: var(--text-2, #cbd5e1);
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.edit-btn:hover {
+  color: #fff;
+  border-color: #667eea;
+  background: rgba(102, 126, 234, .16);
+}
+.edit-btn:active { transform: translateY(1px); }
+.edit-btn:focus-visible { outline: 2px solid #667eea; outline-offset: 1px; }
+
+.edit-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border, #2a3142);
+  margin: 0 4px;
+  flex: none;
+}
+
+.edit-hint-tag {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: none;
+  color: #818cf8;
+  background: rgba(102, 126, 234, .16);
+  border-radius: 4px;
+  padding: 2px 6px;
+  margin-left: 6px;
+}
+
+.edit-hint-inline {
+  font-size: 10.5px;
+  color: var(--text-3, #94a3b8);
+  margin-left: 4px;
+}
+
+/* ── sub-bloques con interruptor (sombra, contorno, fondo) ── */
+.edit-sub {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft, #222838);
+}
+
+.edit-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 4px;
+}
+.edit-switch input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 34px;
+  height: 19px;
+  border-radius: 10px;
+  background: var(--bg-3, #242b3d);
+  border: 1px solid var(--border, #2a3142);
+  position: relative;
+  cursor: pointer;
+  flex: none;
+  transition: background .18s ease, border-color .18s ease;
+  margin: 0;
+}
+.edit-switch input::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #64748b;
+  transition: transform .18s ease, background .18s ease;
+}
+.edit-switch input:checked {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-color: transparent;
+}
+.edit-switch input:checked::after {
+  transform: translateX(15px);
+  background: #fff;
+}
+.edit-switch input:focus-visible { outline: 2px solid #667eea; outline-offset: 2px; }
+.edit-switch span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-1, #e2e8f0);
+}
+
+.edit-sub-body {
+  padding-left: 2px;
+  transition: opacity .18s ease;
+}
+.edit-sub-body.is-off {
+  opacity: .35;
+  pointer-events: none;
+}
+
+/* selector de color mas grande — el de serie era diminuto */
+.edit-sub-body .prop-color,
+.prop-section .prop-color {
+  width: 40px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #2a3142);
+  cursor: pointer;
+  padding: 2px;
+  background: var(--bg-2, #1a1f2e);
+}
+.prop-section .prop-color:hover { border-color: #667eea; }
+
+/* ── damero: se ve cuando el lienzo no tiene fondo ── */
+body.bg-transparent .canvas-container {
+  background-image:
+    linear-gradient(45deg, #cbd5e1 25%, transparent 25%),
+    linear-gradient(-45deg, #cbd5e1 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #cbd5e1 75%),
+    linear-gradient(-45deg, transparent 75%, #cbd5e1 75%);
+  background-size: 22px 22px;
+  background-position: 0 0, 0 11px, 11px -11px, -11px 0;
+  background-color: #f1f5f9;
+}
+
+/* ── fondo avanzado: degradado propio ── */
+.bgav-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.bgav-col { flex: 1; min-width: 0; }
+.bgav-col label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-3, #94a3b8);
+  margin-bottom: 4px;
+}
+.bgav-col .prop-color { width: 100%; height: 34px; }
+.bgav-swap {
+  flex: none;
+  width: 36px;
+  height: 34px;
+  padding: 0;
+  font-size: 15px;
+  display: grid;
+  place-items: center;
+}
+.bgav-preview {
+  height: 46px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #2a3142);
+  margin-top: 4px;
+}
+
+/* ── boton fijo "Foto" de la barra izquierda ── */
+.tool-foto.falta-foto {
+  color: #fbbf24 !important;
+  position: relative;
+}
+.tool-foto.falta-foto::after {
+  content: '';
+  position: absolute;
+  top: 8px; right: 10px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251,191,36,.22);
+  animation: latido-foto 1.6s ease-in-out infinite;
+}
+@keyframes latido-foto {
+  0%,100% { opacity: 1; }
+  50%     { opacity: .35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tool-foto.falta-foto::after { animation: none; }
+}
