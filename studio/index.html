@@ -17,11 +17,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@400;600;700;900&family=Montserrat:wght@400;600;700;900&family=Playfair+Display:wght@400;700;900&family=Roboto:wght@400;700;900&family=Lora:wght@400;700&family=Raleway:wght@400;700;900&family=Bebas+Neue&family=Space+Grotesk:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/properties.css">
-<link rel="stylesheet" href="css/pdf.css">
+<link rel="stylesheet" href="css/base.css?v=20260724c">
+<link rel="stylesheet" href="css/layout.css?v=20260724c">
+<link rel="stylesheet" href="css/components.css?v=20260724c">
+<link rel="stylesheet" href="css/properties.css?v=20260724c">
+<link rel="stylesheet" href="css/pdf.css?v=20260724c">
+<link rel="stylesheet" href="css/my-templates.css?v=20260724c">
+<link rel="stylesheet" href="css/edit-tools.css?v=20260724c">
+<link rel="stylesheet" href="css/tpl-modal.css?v=20260724c">
+<link rel="stylesheet" href="css/campos-rapidos.css?v=20260726c">
 </head>
 <body>
 
@@ -115,6 +119,12 @@
       <button class="tool" data-tool="image" title="Imagen (I)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         <span>Imagen</span>
+      </button>
+      <!-- Boton FIJO, escrito aqui a proposito: pone la foto en el hueco de
+           la plantilla. No se inyecta ni depende de que el panel se pinte. -->
+      <button class="tool tool-foto" id="toolPonerFoto" title="Poner la foto en el hueco de la plantilla">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <span>Foto</span>
       </button>
       <div class="tool-wrapper">
         <button class="tool" id="toolMenuBtn" title="Herramientas creativas">
@@ -702,26 +712,38 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
-<script src="js/icons.js"></script>
-<script src="js/templates.js"></script>
-<script src="js/config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/canvas.js"></script>
-<script src="js/formats.js"></script>
-<script src="js/tools.js"></script>
-<script src="js/tools-menu.js"></script>
-<script src="js/active-color.js"></script>
-<script src="js/crop.js"></script>
-<script src="js/eraser.js"></script>
-<script src="js/lasso-wand.js"></script>
-<script src="js/storage.js"></script>
-<script src="js/properties.js"></script>
-<script src="js/events.js"></script>
-<script src="js/app.js"></script>
-<script src="js/pdf.js"></script>
-<script src="js/pdf-annotate.js"></script>
-<script src="js/upgrade.js"></script>
-<script src="js/auth.js"></script>
+<script src="js/icons.js?v=20260724c"></script>
+<script src="js/auto-fit.js?v=20260724c"></script>
+<script src="js/templates.js?v=20260724c"></script>
+<script src="js/templates-auto.js?v=20260726b"></script>
+<script src="js/templates-catalogo.js?v=20260724c"></script>
+<script src="js/templates-servicio.js?v=20260724c"></script>
+<script src="js/config.js?v=20260726b"></script>
+<script src="js/utils.js?v=20260724c"></script>
+<script src="js/canvas.js?v=20260724c"></script>
+<script src="js/formats.js?v=20260724c"></script>
+<script src="js/tools.js?v=20260724c"></script>
+<script src="js/tools-menu.js?v=20260724c"></script>
+<script src="js/active-color.js?v=20260724c"></script>
+<script src="js/crop.js?v=20260724c"></script>
+<script src="js/eraser.js?v=20260724c"></script>
+<script src="js/lasso-wand.js?v=20260724c"></script>
+<script src="js/storage.js?v=20260724c"></script>
+<script src="js/foto-hueco.js?v=20260726b"></script>
+<script src="js/my-templates.js?v=20260724c"></script>
+<script src="js/edit-tools.js?v=20260724c"></script>
+<script src="js/fondo-avanzado.js?v=20260724c"></script>
+<script src="js/rubros.js?v=20260724c"></script>
+<script src="js/tpl-modal.js?v=20260724c"></script>
+<script src="js/properties.js?v=20260724c"></script>
+<script src="js/events.js?v=20260726b"></script>
+<script src="js/campos-rapidos.js?v=20260726c"></script>
+<script src="js/add-layer.js?v=20260726a"></script>
+<script src="js/app.js?v=20260724c"></script>
+<script src="js/pdf.js?v=20260724c"></script>
+<script src="js/pdf-annotate.js?v=20260724c"></script>
+<script src="js/upgrade.js?v=20260726c"></script>
+<script src="js/auth.js?v=20260724c"></script>
 
 <script>
   // ── Auth modal handlers (inline para reusar DOM nativo) ──
