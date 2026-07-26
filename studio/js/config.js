@@ -48,7 +48,14 @@ const state = {
   activeColors: ['#667eea', '#4ade80', '#f5576c'],
 };
 
+// Monetización EN PAUSA (Jose, 26-jul-2026: "olvidate de planes, cómo vamos a
+// cobrar por algo que no está completo"). Con esto TODO queda desbloqueado:
+// capas, logo, herramientas y formatos, sin candados Pro. El producto primero
+// funciona; el modelo Free/Pro se reactiva poniendo esto en true.
+const MONETIZACION_ACTIVA = false;
+
 function isPro() {
+  if (!MONETIZACION_ACTIVA) return true;
   return state.userPlan === 'pro_monthly' || state.userPlan === 'pro_yearly';
 }
 
