@@ -254,6 +254,7 @@ function makeArrow(cx, cy, size, common) {
 
 /* ══════════ BACKGROUND (Fase 4) ══════════ */
 function setCanvasBgColor(color) {
+  document.body.classList.remove('bg-transparent');
   canvas.setBackgroundImage(null, () => {
     canvas.setBackgroundColor(color, canvas.renderAll.bind(canvas));
   });
@@ -274,6 +275,7 @@ function setCanvasBgGradient(c1, c2, angle = 135) {
       { offset: 1, color: c2 },
     ],
   });
+  document.body.classList.remove('bg-transparent');
   canvas.setBackgroundImage(null, () => {
     canvas.setBackgroundColor(grad, canvas.renderAll.bind(canvas));
   });
@@ -291,16 +293,27 @@ function setCanvasBgImage(src) {
       scaleX: scale, scaleY: scale,
       selectable: false, evented: false,
     });
+    document.body.classList.remove('bg-transparent');
     canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
     status('Fondo: imagen cargada');
   }, { crossOrigin: 'anonymous' });
 }
 
+// Quitar el fondo lo deja TRANSPARENTE de verdad (antes lo pintaba de blanco).
+// El damero del lienzo lo pinta css/edit-tools.css con la clase bg-transparent.
 function clearCanvasBg() {
   canvas.setBackgroundImage(null, () => {
-    canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas));
+    canvas.setBackgroundColor('', () => {
+      document.body.classList.add('bg-transparent');
+      canvas.renderAll();
+    });
   });
-  status('Fondo restablecido');
+  status('Fondo transparente — exporta en PNG o WebP para conservarlo');
+}
+
+// Vuelve a haber fondo: se apaga el damero.
+function _bgYaNoTransparente() {
+  document.body.classList.remove('bg-transparent');
 }
 
 /* ══════════ ICONS (Fase 5) ══════════ */
